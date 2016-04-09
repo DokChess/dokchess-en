@@ -34,7 +34,7 @@ public enum Colour {
     WHITE;
 
     /**
-     * Returns the other colour for a colour.
+     * Returns the other colour.
      *
      * @return the other colour.
      */
