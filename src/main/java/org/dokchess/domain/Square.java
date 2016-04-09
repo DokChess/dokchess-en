@@ -117,11 +117,11 @@ public final class Square {
     public String toString() {
         StringBuilder sb = new StringBuilder(2);
 
-        String linien = "abcdefgh";
-        String reihen = "87654321";
+        String files = "abcdefgh";
+        String ranks = "87654321";
 
-        sb.append(linien.charAt(this.file));
-        sb.append(reihen.charAt(this.rank));
+        sb.append(files.charAt(this.file));
+        sb.append(ranks.charAt(this.rank));
 
         return sb.toString();
     }
