@@ -21,28 +21,31 @@ package org.dokchess.domain;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.dokchess.domain.Squares.*;
+import static org.dokchess.domain.Colour.WHITE;
+import static org.dokchess.domain.PieceType.PAWN;
+import static org.dokchess.domain.Squares.e2;
+import static org.dokchess.domain.Squares.e4;
+
 
 public class MoveTest {
 
-    private static final Piece WEISSER_BAUER = new Piece(PieceType.PAWN,
-            Colour.WHITE);
+    private static final Piece WHITE_PAWN = new Piece(PAWN, WHITE);
 
     @Test
     public void testEqualsHashcode() {
 
-        Move z1 = new Move(WEISSER_BAUER, e2, e4);
-        Move z2 = new Move(WEISSER_BAUER, e2, e4);
+        Move m1 = new Move(WHITE_PAWN, e2, e4);
+        Move m2 = new Move(WHITE_PAWN, e2, e4);
 
-        Assert.assertEquals(z1, z2);
-        Assert.assertEquals(z1.hashCode(), z2.hashCode());
+        Assert.assertEquals(m1, m2);
+        Assert.assertEquals(m1.hashCode(), m2.hashCode());
     }
 
     @Test
     public void testToString() {
 
-        Move z1 = new Move(WEISSER_BAUER, e2, e4);
-        String s = z1.toString();
+        Move m = new Move(WHITE_PAWN, e2, e4);
+        String s = m.toString();
 
         Assert.assertEquals("e2-e4", s);
     }
