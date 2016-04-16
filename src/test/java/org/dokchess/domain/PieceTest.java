@@ -21,15 +21,20 @@ package org.dokchess.domain;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.dokchess.domain.Colour.BLACK;
+import static org.dokchess.domain.Colour.WHITE;
+import static org.dokchess.domain.PieceType.PAWN;
+import static org.dokchess.domain.PieceType.QUEEN;
+
 public class PieceTest {
 
     @Test
     public void toStringTest() {
 
-        Piece whitePawn = new Piece(PieceType.KING.PAWN, Colour.WHITE);
+        Piece whitePawn = new Piece(PAWN, WHITE);
         Assert.assertEquals("WHITE PAWN", whitePawn.toString());
 
-        Piece blackQueen = new Piece(PieceType.QUEEN, Colour.BLACK);
+        Piece blackQueen = new Piece(QUEEN, BLACK);
         Assert.assertEquals("BLACK QUEEN", blackQueen.toString());
     }
 }
