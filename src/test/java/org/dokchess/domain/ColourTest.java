@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2010-2016 Stefan Zoerner
- *
  * This file is part of DokChess.
  *
  * DokChess is free software: you can redistribute it and/or modify
@@ -21,15 +20,13 @@ package org.dokchess.domain;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.dokchess.domain.Colour.*;
 
 public class ColourTest {
 
     @Test
     public void otherColour() {
-
-        assertEquals(Colour.WHITE, Colour.BLACK.otherColour());
-        assertEquals(Colour.BLACK, Colour.WHITE.otherColour());
-
+        assertEquals(WHITE, BLACK.otherColour());
+        assertEquals(BLACK, WHITE.otherColour());
     }
-
 }
