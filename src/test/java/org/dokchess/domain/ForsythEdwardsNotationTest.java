@@ -28,10 +28,10 @@ import static  org.dokchess.domain.Colour.*;
 public class ForsythEdwardsNotationTest {
 
     /**
-     * Umwandlung der Anfangsstellung in eine FEN-Zeichenkette
+     * Converting the starting position to FEN.
      */
     @Test
-    public void anfangsstellungToString() {
+    public void startingPositionToString() {
 
         Position s = new Position();
 
@@ -41,7 +41,7 @@ public class ForsythEdwardsNotationTest {
     }
 
     /**
-     * Stellung mit en passant in Zeichenkette.
+     * Position with en passant in String.
      */
     @Test
     public void enPassantToString() {
@@ -55,10 +55,10 @@ public class ForsythEdwardsNotationTest {
     }
 
     /**
-     * Umwandlung einer FEN-Zeichenkette in ein Stellungsobjekt
+     * Conversion of a FEN String to a position object.
      */
     @Test
-    public void schaefermattFenInStellung() {
+    public void scholarsMateFenToPosition() {
 
         Position pos = new Position();
         String fen = "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 1";
