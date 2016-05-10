@@ -23,12 +23,12 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
-
-import static  org.dokchess.domain.Squares.*;
-import static  org.dokchess.domain.PieceType.*;
-import static  org.dokchess.domain.Colour.*;
 import static org.dokchess.domain.CastlingType.*;
+import static org.dokchess.domain.Colour.BLACK;
+import static org.dokchess.domain.Colour.WHITE;
+import static org.dokchess.domain.PieceType.*;
+import static org.dokchess.domain.Squares.*;
+import static org.junit.Assert.*;
 
 
 public class PositionTest {
@@ -94,7 +94,7 @@ public class PositionTest {
         Position pos = new Position("rnbqkbnr/ppp3pp/3ppp2/8/8/4PN2/PPPPBPPP/RNBQK2R w KQkq - 0 1");
 
         Move move = new Move(WHITE_KING, e1, g1);
-        assertTrue(move.istRochadeKurz());
+        assertTrue(move.isCastlingKingside());
 
         Position newPos = pos.performMove(move);
 
