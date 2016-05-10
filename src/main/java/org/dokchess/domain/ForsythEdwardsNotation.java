@@ -66,7 +66,7 @@ final class ForsythEdwardsNotation {
                 rank++;
                 file = 0;
             } else {
-                PieceType pieceType = PieceType.ausBuchstabe(piece);
+                PieceType pieceType = PieceType.fromLetter(piece);
                 Colour side = Character.isUpperCase(piece) ? Colour.WHITE
                         : Colour.BLACK;
                 Piece p = new Piece(pieceType, side);
