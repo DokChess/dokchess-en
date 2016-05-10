@@ -131,7 +131,7 @@ final class ForsythEdwardsNotation {
                         sb.append(free);
                         free = 0;
                     }
-                    sb.append(piece.alsBuchstabe());
+                    sb.append(piece.asLetter());
                 }
             }
             if (free > 0) {

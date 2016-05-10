@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2010-2016 Stefan Zoerner
- *
  * This file is part of DokChess.
  *
  * DokChess is free software: you can redistribute it and/or modify
@@ -75,7 +74,7 @@ public enum PieceType {
      * @return the piece type.
      * @throws java.lang.IllegalArgumentException not a valid letter.
      */
-    public static PieceType ausBuchstabe(final char c) {
+    public static PieceType fromLetter(final char c) {
         switch (c) {
             case 'k':
             case 'K':

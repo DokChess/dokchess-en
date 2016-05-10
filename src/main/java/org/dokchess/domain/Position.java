@@ -20,10 +20,11 @@ package org.dokchess.domain;
 
 import java.util.*;
 
-
-import static org.dokchess.domain.PieceType.*;
-import static org.dokchess.domain.Colour.*;
 import static org.dokchess.domain.CastlingType.*;
+import static org.dokchess.domain.Colour.BLACK;
+import static org.dokchess.domain.Colour.WHITE;
+import static org.dokchess.domain.PieceType.KING;
+import static org.dokchess.domain.PieceType.ROOK;
 import static org.dokchess.domain.Squares.*;
 
 /**
@@ -237,7 +238,7 @@ public final class Position {
     }
 
     private void rochadeDurchfuehrenBehandeln(Move move, Position newPos) {
-        if (move.istRochadeKurz()) {
+        if (move.isCastlingKingside()) {
             newPos.castlingsAvailable = EnumSet.copyOf(castlingsAvailable);
             switch (getToMove()) {
                 case WHITE:
@@ -253,7 +254,7 @@ public final class Position {
                     newPos.castlingsAvailable.remove(BLACK_QUEENSIDE);
                     break;
             }
-        } else if (move.istRochadeLang()) {
+        } else if (move.isCastlingQueenside()) {
             newPos.castlingsAvailable = EnumSet.copyOf(castlingsAvailable);
             switch (getToMove()) {
                 case WHITE:
@@ -327,6 +328,16 @@ public final class Position {
         }
 
         return newPos;
+    }
+
+    /**
+     * Returns if the given square is free. I.e. no piece is on this square.
+     *
+     * @param s sqaure to test
+     * @return true, if no piece on this square.
+     */
+    public boolean isFree(Square s) {
+        return this.getPiece(s) == null;
     }
 
     /**
