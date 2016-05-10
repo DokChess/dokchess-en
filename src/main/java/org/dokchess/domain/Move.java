@@ -135,7 +135,7 @@ public final class Move {
      *
      * @return true, if a piece is captured.
      */
-    public boolean istSchlagen() {
+    public boolean isCapture() {
         return capture;
     }
 
@@ -144,7 +144,7 @@ public final class Move {
      *
      * @return true if the moving piece is a pawn.
      */
-    public boolean istBauernZug() {
+    public boolean isPawnMove() {
         return piece.getType() == PieceType.PAWN;
     }
 
@@ -184,7 +184,7 @@ public final class Move {
      *
      * @return true bei einer kurzen Rochade.
      */
-    public boolean istRochadeKurz() {
+    public boolean isCastlingKingside() {
         return isCastling() && to.getFile() == 6;
     }
 
@@ -194,7 +194,7 @@ public final class Move {
      *
      * @return true bei einer langen Rochade.
      */
-    public boolean istRochadeLang() {
+    public boolean isCastlingQueenside() {
         return isCastling() && to.getFile() == 2;
     }
 
