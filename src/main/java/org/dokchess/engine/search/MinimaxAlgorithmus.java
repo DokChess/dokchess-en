@@ -21,7 +21,7 @@ package org.dokchess.engine.search;
 import org.dokchess.domain.Colour;
 import org.dokchess.domain.Move;
 import org.dokchess.domain.Position;
-import org.dokchess.engine.eval.Bewertung;
+import org.dokchess.engine.eval.Evaluation;
 import org.dokchess.rules.ChessRules;
 
 import java.util.Collection;
@@ -30,9 +30,9 @@ public class MinimaxAlgorithmus {
 
     protected ChessRules chessRules;
 
-    protected Bewertung bewertung;
+    protected Evaluation evaluation;
 
-    private static final int MATT_BEWERTUNG = Bewertung.AM_BESTEN / 2;
+    private static final int MATT_BEWERTUNG = Evaluation.BEST / 2;
 
     private int tiefe;
 
@@ -40,8 +40,8 @@ public class MinimaxAlgorithmus {
      * Setzt die Bewertungsfunktion, anhand derer die Stellungen bei Erreichen
      * der maximalen Suchtiefe bewertet werden.
      */
-    public void setBewertung(Bewertung bewertung) {
-        this.bewertung = bewertung;
+    public void setEvaluation(Evaluation evaluation) {
+        this.evaluation = evaluation;
     }
 
     /**
@@ -67,7 +67,7 @@ public class MinimaxAlgorithmus {
         Colour spielerFarbe = stellung.getToMove();
         Collection<Move> zuege = chessRules.getLegalMoves(stellung);
 
-        int besterWert = Bewertung.AM_SCHLECHTESTEN;
+        int besterWert = Evaluation.WORST;
         Move besterZug = null;
 
         for (Move zug : zuege) {
@@ -94,7 +94,7 @@ public class MinimaxAlgorithmus {
                                           Colour spielerFarbe) {
 
         if (aktuelleTiefe == tiefe) {
-            return bewertung.bewerteStellung(stellung, spielerFarbe);
+            return evaluation.evaluatePosition(stellung, spielerFarbe);
         } else {
             Collection<Move> zuege = chessRules.getLegalMoves(stellung);
             if (zuege.isEmpty()) {
@@ -102,7 +102,7 @@ public class MinimaxAlgorithmus {
                 // PATT
                 if (!chessRules
                         .isCheck(stellung, stellung.getToMove())) {
-                    return Bewertung.AUSGEGLICHEN;
+                    return Evaluation.BALANCED;
                 }
 
                 // MATT
@@ -116,7 +116,7 @@ public class MinimaxAlgorithmus {
             } else {
                 if (aktuelleTiefe % 2 == 0) {
                     // Max
-                    int max = Bewertung.AM_SCHLECHTESTEN;
+                    int max = Evaluation.WORST;
                     for (Move zug : zuege) {
                         Position neueStellung = stellung.performMove(zug);
                         int wert = bewerteStellungRekursiv(neueStellung,
@@ -128,7 +128,7 @@ public class MinimaxAlgorithmus {
                     return max;
                 } else {
                     // Min
-                    int min = Bewertung.AM_BESTEN;
+                    int min = Evaluation.BEST;
                     for (Move zug : zuege) {
                         Position neueStellung = stellung.performMove(zug);
                         int wert = bewerteStellungRekursiv(neueStellung,

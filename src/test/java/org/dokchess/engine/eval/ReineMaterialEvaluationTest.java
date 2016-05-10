@@ -20,37 +20,35 @@ package org.dokchess.engine.eval;
 
 import org.dokchess.domain.Colour;
 import org.dokchess.domain.Position;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Bewertung einer Stellung aus Sicht eines Spielers.
+ * Sehr einfache Tests fuer die Materialbewertung.
  *
  * @author StefanZ
  */
-public interface Bewertung {
+public class ReineMaterialEvaluationTest {
 
-    /**
-     * Bestm&ouml;glicher Wert.
-     */
-    int AM_BESTEN = Integer.MAX_VALUE;
+    @Test
+    public void beiGrundStellungKommt0raus() {
 
-    /**
-     * Schlechtestm&ouml;glicher Wert.
-     */
-    int AM_SCHLECHTESTEN = Integer.MIN_VALUE;
+        Position stellung = new Position();
+        Evaluation evaluation = new ReineMaterialEvaluation();
 
-    /**
-     * Wert fuer eine ausgeglichene Stellung.
-     */
-    int AUSGEGLICHEN = 0;
+        int wert = evaluation.evaluatePosition(stellung, stellung.getToMove());
+        Assert.assertEquals(Evaluation.BALANCED, wert);
+    }
 
-    /**
-     * Liefert zur gegebenen Stellung eine Bewertung aus Sicht der angegebenen
-     * Spielerfarbe. Je h&ouml;her, desto besser.
-     *
-     * @param stellung zu bewertende Spielsituation
-     * @param ausSicht Spieler, aus desen Sicht bewertet wird
-     * @return Bewertung, 0 ist ausgeglichen, je h&ouml;her desto besser fuer
-     * den Spieler
-     */
-    int bewerteStellung(Position stellung, Colour ausSicht);
+    @Test
+    public void dameIstBesserAlsTurm() {
+
+        // Weiss hat eine Dame, schwarz einen Turm.
+        Position stellung = new Position("8/Q1K5/8/8/8/6k1/6r1/8 w - - 0 1");
+        Evaluation evaluation = new ReineMaterialEvaluation();
+
+        int wert = evaluation.evaluatePosition(stellung, Colour.WHITE);
+        Assert.assertTrue(wert > 0);
+    }
+
 }

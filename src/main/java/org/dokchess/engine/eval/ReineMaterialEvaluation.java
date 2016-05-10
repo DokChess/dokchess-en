@@ -32,18 +32,18 @@ import org.dokchess.domain.Position;
  *
  * @author StefanZ
  */
-public class ReineMaterialBewertung implements Bewertung {
+public class ReineMaterialEvaluation implements Evaluation {
 
     @Override
-    public int bewerteStellung(Position stellung, Colour ausSicht) {
+    public int evaluatePosition(Position position, Colour pointOfView) {
         int summe = 0;
 
         for (int reihe = 0; reihe < 8; ++reihe) {
             for (int linie = 0; linie < 8; ++linie) {
-                Piece figur = stellung.getPiece(reihe, linie);
+                Piece figur = position.getPiece(reihe, linie);
                 if (figur != null) {
                     double wert = figurenWert(figur);
-                    if (figur.getColour() == ausSicht) {
+                    if (figur.getColour() == pointOfView) {
                         summe += wert;
                     } else {
                         summe -= wert;

@@ -20,7 +20,7 @@ package org.dokchess.engine;
 
 import org.dokchess.domain.Move;
 import org.dokchess.domain.Position;
-import org.dokchess.engine.eval.ReineMaterialBewertung;
+import org.dokchess.engine.eval.ReineMaterialEvaluation;
 import org.dokchess.engine.search.MinimaxParalleleSuche;
 import org.dokchess.opening.Eroeffnungsbibliothek;
 import org.dokchess.rules.ChessRules;
@@ -53,7 +53,7 @@ public class DefaultEngine implements Engine {
         MinimaxParalleleSuche minimax = new MinimaxParalleleSuche();
         minimax.setTiefe(4);
         minimax.setChessRules(chessRules);
-        minimax.setBewertung(new ReineMaterialBewertung());
+        minimax.setEvaluation(new ReineMaterialEvaluation());
 
         AusSuche ausSuche = new AusSuche(minimax);
 
