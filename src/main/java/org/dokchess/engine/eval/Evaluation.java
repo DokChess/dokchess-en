@@ -29,7 +29,7 @@ import org.dokchess.domain.Position;
 public interface Evaluation {
 
     /**
-     * Best value posibble.
+     * Best value possible.
      */
     int BEST = Integer.MAX_VALUE;
 
