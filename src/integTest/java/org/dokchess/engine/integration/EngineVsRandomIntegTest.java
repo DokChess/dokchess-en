@@ -38,13 +38,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The engine in standard configuration plays white agaist a
+ * The engine in standard configuration plays white against a
  * computer opponent basically with random move,
  * <p>
  * The latter plays arbitrary moves (valid according to the chess
  * rules), but prefers capture and pawn moves in order to drive the game.
  */
-public class EngineGegenZufallIntegTest {
+public class EngineVsRandomIntegTest {
 
     Position board = null;
     Engine dokChess = null;
