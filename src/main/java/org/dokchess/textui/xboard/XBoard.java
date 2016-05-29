@@ -147,7 +147,7 @@ public class XBoard implements Observer<Move> {
                     }
                 }
 
-                engine.ziehen(zug);
+                engine.performMove(zug);
                 stellung = stellung.performMove(zug);
 
                 Observable<Move> s = engine.determineYourMove();
@@ -185,7 +185,7 @@ public class XBoard implements Observer<Move> {
     @Override
     public void onCompleted() {
         schreiben(parser.nachXboard(this.besterZug));
-        this.engine.ziehen(this.besterZug);
+        this.engine.performMove(this.besterZug);
         this.stellung = this.stellung.performMove(this.besterZug);
     }
 

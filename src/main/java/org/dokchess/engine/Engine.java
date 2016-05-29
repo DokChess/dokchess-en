@@ -56,7 +56,7 @@ public interface Engine {
      *
      * @param zug der auszuf&uuml;rende Zug.
      */
-    void ziehen(Move zug);
+    void performMove(Move zug);
 
     /**
      * Schliesst die Engine. Die Methode erlaubt es Ressourcen frei zu geben.

@@ -52,19 +52,19 @@ public class PolyglotOpeningBookTest {
 
         // 1. e2-e4
         Position stellung = new Position();
-        Move move = book.liefereZug(stellung);
+        Move move = book.lookUpMove(stellung);
         Assert.assertEquals("e2", move.getFrom().toString());
         Assert.assertEquals("e4", move.getTo().toString());
 
         // 1. ... e7-e5
         stellung = stellung.performMove(move);
-        move = book.liefereZug(stellung);
+        move = book.lookUpMove(stellung);
         Assert.assertEquals("e7", move.getFrom().toString());
         Assert.assertEquals("e5", move.getTo().toString());
 
         // 2. S g1-f3
         stellung = stellung.performMove(move);
-        move = book.liefereZug(stellung);
+        move = book.lookUpMove(stellung);
         Assert.assertEquals("g1", move.getFrom().toString());
         Assert.assertEquals("f3", move.getTo().toString());
     }

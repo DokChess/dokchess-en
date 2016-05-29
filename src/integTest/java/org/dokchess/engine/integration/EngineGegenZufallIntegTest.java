@@ -84,7 +84,7 @@ public class EngineGegenZufallIntegTest {
 
     synchronized void move(Move move) {
         board = board.performMove(move);
-        dokChess.ziehen(move);
+        dokChess.performMove(move);
     }
 
     class ZugHinRueck implements rx.Observer<Move> {

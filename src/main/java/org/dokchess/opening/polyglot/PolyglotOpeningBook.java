@@ -21,14 +21,14 @@ import org.dokchess.domain.Move;
 import org.dokchess.domain.Piece;
 import org.dokchess.domain.Position;
 import org.dokchess.domain.Square;
-import org.dokchess.opening.Eroeffnungsbibliothek;
+import org.dokchess.opening.OpeningLibrary;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PolyglotOpeningBook implements Eroeffnungsbibliothek {
+public class PolyglotOpeningBook implements OpeningLibrary {
 
     private AuswahlModus auswahlModus;
 
@@ -50,7 +50,7 @@ public class PolyglotOpeningBook implements Eroeffnungsbibliothek {
     }
 
     @Override
-    public Move liefereZug(Position stellung) {
+    public Move lookUpMove(Position stellung) {
 
         String fen = stellung.toString();
         List<BookEntry> treffer = findEntriesByFen(fen);

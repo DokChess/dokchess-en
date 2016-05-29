@@ -21,7 +21,7 @@ package org.dokchess.opening;
 import org.dokchess.domain.Move;
 import org.dokchess.domain.Position;
 
-public interface Eroeffnungsbibliothek {
+public interface OpeningLibrary {
 
     /**
      * Liefert zur angegebenen Stellung einen aus der Bibliothek bekannten Zug,
@@ -30,5 +30,5 @@ public interface Eroeffnungsbibliothek {
      * @param stellung zu betrachtende Stellung
      * @return passender Zug, oder null, falls keiner bekannt
      */
-    Move liefereZug(Position stellung);
+    Move lookUpMove(Position stellung);
 }

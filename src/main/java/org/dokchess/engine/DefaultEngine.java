@@ -22,7 +22,7 @@ import org.dokchess.domain.Move;
 import org.dokchess.domain.Position;
 import org.dokchess.engine.eval.ReineMaterialEvaluation;
 import org.dokchess.engine.search.MinimaxParalleleSuche;
-import org.dokchess.opening.Eroeffnungsbibliothek;
+import org.dokchess.opening.OpeningLibrary;
 import org.dokchess.rules.ChessRules;
 import rx.Observable;
 import rx.subjects.ReplaySubject;
@@ -46,7 +46,7 @@ public class DefaultEngine implements Engine {
     }
 
     public DefaultEngine(ChessRules chessRules,
-                         Eroeffnungsbibliothek eroeffnungsbibliothek) {
+                         OpeningLibrary openingLibrary) {
 
         this.stellung = new Position();
 
@@ -57,8 +57,8 @@ public class DefaultEngine implements Engine {
 
         AusSuche ausSuche = new AusSuche(minimax);
 
-        if (eroeffnungsbibliothek != null) {
-            this.zugErmitteln = new AusBibliothek(eroeffnungsbibliothek, ausSuche);
+        if (openingLibrary != null) {
+            this.zugErmitteln = new AusBibliothek(openingLibrary, ausSuche);
         } else {
             this.zugErmitteln = ausSuche;
         }
@@ -79,7 +79,7 @@ public class DefaultEngine implements Engine {
     }
 
     @Override
-    public void ziehen(Move zug) {
+    public void performMove(Move zug) {
         stellung = stellung.performMove(zug);
         zugErmitteln.aktuelleErmittlungBeenden();
     }

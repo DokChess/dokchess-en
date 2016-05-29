@@ -19,7 +19,7 @@ package org.dokchess;
 
 import org.dokchess.engine.DefaultEngine;
 import org.dokchess.engine.Engine;
-import org.dokchess.opening.Eroeffnungsbibliothek;
+import org.dokchess.opening.OpeningLibrary;
 import org.dokchess.opening.polyglot.AuswahlModus;
 import org.dokchess.opening.polyglot.PolyglotOpeningBook;
 import org.dokchess.rules.ChessRules;
@@ -52,7 +52,7 @@ public final class Main {
      */
     public static void main(String[] args) {
 
-        Eroeffnungsbibliothek bibliothek = null;
+        OpeningLibrary bibliothek = null;
 
         if (args.length > 0) {
             String dateiName = args[0];

@@ -19,14 +19,14 @@ package org.dokchess.engine;
 
 import org.dokchess.domain.Move;
 import org.dokchess.domain.Position;
-import org.dokchess.opening.Eroeffnungsbibliothek;
+import org.dokchess.opening.OpeningLibrary;
 import rx.Observer;
 
 class AusBibliothek extends ZugErmitteln {
 
-    private Eroeffnungsbibliothek bibliothek;
+    private OpeningLibrary bibliothek;
 
-    public AusBibliothek(Eroeffnungsbibliothek bibliothek,
+    public AusBibliothek(OpeningLibrary bibliothek,
                          ZugErmitteln nachfolger) {
         super(nachfolger);
         this.bibliothek = bibliothek;
@@ -34,7 +34,7 @@ class AusBibliothek extends ZugErmitteln {
 
     @Override
     public void ermittelZug(Position stellung, Observer<Move> subject) {
-        Move zug = bibliothek.liefereZug(stellung);
+        Move zug = bibliothek.lookUpMove(stellung);
         if (zug != null) {
             subject.onNext(zug);
             subject.onCompleted();

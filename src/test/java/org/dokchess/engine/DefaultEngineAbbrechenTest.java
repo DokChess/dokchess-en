@@ -42,7 +42,7 @@ public class DefaultEngineAbbrechenTest {
         Thread.sleep(500);
 
         Move z = regeln.getLegalMoves(anfang).iterator().next();
-        engine.ziehen(z);
+        engine.performMove(z);
 
         Thread.sleep(1000);
     }

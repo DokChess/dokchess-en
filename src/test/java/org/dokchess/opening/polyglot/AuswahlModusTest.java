@@ -58,7 +58,7 @@ public class AuswahlModusTest {
         }
 
         // Pruefen, dass der geliefert wird.
-        Move zug2 = buch.liefereZug(stellung);
+        Move zug2 = buch.lookUpMove(stellung);
         Assert.assertEquals(zug1.getMoveFrom(), zug2.getFrom().toString());
         Assert.assertEquals(zug1.getMoveTo(), zug2.getTo().toString());
     }
@@ -71,7 +71,7 @@ public class AuswahlModusTest {
         List<BookEntry> eintraege = buch.findEntriesByFen(stellung.toString());
         BookEntry zug1 = eintraege.get(0);
 
-        Move zug2 = buch.liefereZug(stellung);
+        Move zug2 = buch.lookUpMove(stellung);
         Assert.assertEquals(zug1.getMoveFrom(), zug2.getFrom().toString());
         Assert.assertEquals(zug1.getMoveTo(), zug2.getTo().toString());
     }
@@ -81,7 +81,7 @@ public class AuswahlModusTest {
         buch.setAuswahlModus(AuswahlModus.PER_ZUFALL);
 
         Position anfang = new Position();
-        Move zug = buch.liefereZug(anfang);
+        Move zug = buch.lookUpMove(anfang);
 
         Assert.assertNotNull(zug);
     }

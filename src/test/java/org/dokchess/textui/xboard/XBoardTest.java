@@ -75,7 +75,7 @@ public class XBoardTest {
     }
 
     /**
-     * Weiss versucht den Turm auf a1 nach vorn zu ziehen.
+     * Weiss versucht den Turm auf a1 nach vorn zu performMove.
      */
     @Test
     public void ungueltigerZug() {
@@ -119,7 +119,7 @@ public class XBoardTest {
 
         Engine engine = new MockEngine(e7e5);
         engine.setupPieces(new Position());
-        engine.ziehen(e2e4);
+        engine.performMove(e2e4);
 
         xBoard.setEngine(engine);
 
