@@ -45,7 +45,7 @@ public class MockEngine implements Engine {
 
 
     @Override
-    public void setupPieces(Position stellung) {
+    public void setupPieces(Position position) {
     }
 
     @Override
@@ -65,6 +65,6 @@ public class MockEngine implements Engine {
     }
 
     @Override
-    public void schliessen() {
+    public void close() {
     }
 }

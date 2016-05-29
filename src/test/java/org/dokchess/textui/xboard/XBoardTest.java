@@ -49,7 +49,7 @@ public class XBoardTest {
         Reader eingabe = new StringReader(eingegeben);
         xBoard.setInput(eingabe);
 
-        xBoard.spielen();
+        xBoard.play();
     }
 
     /**
@@ -69,7 +69,7 @@ public class XBoardTest {
         Writer ausgabe = new StringWriter();
         xBoard.setOutput(ausgabe);
 
-        xBoard.spielen();
+        xBoard.play();
 
         Assert.assertTrue(ausgabe.toString().contains("Quak"));
     }
@@ -92,7 +92,7 @@ public class XBoardTest {
         xBoard.setChessRules(chessRules);
         xBoard.setEngine(new MockEngine());
 
-        xBoard.spielen();
+        xBoard.play();
         Assert.assertTrue(ausgabe.toString().contains("Illegal move"));
     }
 
@@ -123,7 +123,7 @@ public class XBoardTest {
 
         xBoard.setEngine(engine);
 
-        xBoard.spielen();
+        xBoard.play();
         Assert.assertTrue(ausgabe.toString().contains("move e7e5"));
     }
 }

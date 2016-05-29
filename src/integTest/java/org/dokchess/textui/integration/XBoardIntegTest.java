@@ -57,7 +57,7 @@ public class XBoardIntegTest {
         Reader eingabe = new StringReader(input);
         xBoard.setInput(eingabe);
 
-        xBoard.spielen();
+        xBoard.play();
 
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(new Runnable() {
