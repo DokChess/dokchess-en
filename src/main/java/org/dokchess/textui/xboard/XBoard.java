@@ -100,7 +100,7 @@ public class XBoard implements Observer<Move> {
      * Startet die eigentliche Kommunikation (Eingabe/Verarbeitung/Ausgabe) in
      * einer Endlosschleife, bis zum Beenden-Kommando.
      */
-    public void spielen() {
+    public void play() {
 
 
         boolean running = true;
@@ -158,7 +158,7 @@ public class XBoard implements Observer<Move> {
             schreiben("Error (unknown command): " + eingelesen);
         }
 
-        engine.schliessen();
+        engine.close();
     }
 
     String lesen() {

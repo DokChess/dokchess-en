@@ -80,7 +80,7 @@ public final class Main {
         xBoard.setEngine(engine);
         xBoard.setChessRules(chessRules);
 
-        xBoard.spielen();
+        xBoard.play();
     }
 
     static XBoard xBoardBauen() {

@@ -57,7 +57,7 @@ public interface ChessRules {
     boolean isCheck(Position position, Colour colour);
 
     /**
-     * Check whether the given position is a mate. I.e. the king of the current player
+     * Checks whether the given position is a mate. I.e. the king of the current player
      * is under attack, and no legal move changes this. The player to move has lost the game.
      *
      * @param position game situation to examine
@@ -66,7 +66,7 @@ public interface ChessRules {
     boolean isCheckmate(Position position);
 
     /**
-     * Check whether the given position is a stalemate. I.e. the current player has no valid
+     * Checks whether the given position is a stalemate. I.e. the current player has no valid
      * move, but the king is not under attack. The game is considered a draw.
      *
      * @param position game situation to examine
