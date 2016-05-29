@@ -66,8 +66,8 @@ public class DefaultEngine implements Engine {
     }
 
     @Override
-    public void setupPieces(Position stellung) {
-        this.stellung = stellung;
+    public void setupPieces(Position position) {
+        this.stellung = position;
         zugErmitteln.aktuelleErmittlungBeenden();
     }
 
@@ -85,7 +85,7 @@ public class DefaultEngine implements Engine {
     }
 
     @Override
-    public void schliessen() {
+    public void close() {
         zugErmitteln.aktuelleErmittlungBeenden();
     }
 }

@@ -32,16 +32,18 @@ import rx.Observable;
 public interface Engine {
 
     /**
-     * Setzt den Zustand der Engine auf die angegebene Spielsituation.
-     * Falls aktuell eine Zugermittlung l&auml;uft, wird diese abgebrochen.
+     * Sets the state of the engine to the specified position.
+     * If currently a move calculation is running, this will be canceled.
      *
-     * @param stellung die neue Stellung
+     * @param position the new position
      */
-    void setupPieces(Position stellung);
+    void setupPieces(Position position);
 
     /**
-     * Liefert den aus Sicht der Engine optimalen Zug f&uuml;r den aktuellen Spieler,
-     * ohne ihn auszuf&uuml;hren.
+     * Starts the determination of a move for the current game situation.
+     * Returns move candidates asynchronously via an Observable.
+     * The engine does not perform the moves.
+     *
      * Als Ergebnis wird ein Observable zur&uuml;ckgeliefert,
      * d.h. die Methode blockiert nicht, die Engine rechnet ggf. im Hintergrund.
      * Neue beste Z&uuml;ge werden &uuml;ber onNext() gemeldet, das Ende der Berechnung mit onComplete.
@@ -59,8 +61,8 @@ public interface Engine {
     void performMove(Move zug);
 
     /**
-     * Schliesst die Engine. Die Methode erlaubt es Ressourcen frei zu geben.
-     * Im Anschluss sind keine Zugermittlungen mehr m&ouml;glich.
+     * Closes the engine. The method makes it possible to free resources.
+     * No move calculations are allowed afterwards.
      */
-    void schliessen();
+    void close();
 }
