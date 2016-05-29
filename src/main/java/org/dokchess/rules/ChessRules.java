@@ -39,7 +39,7 @@ public interface ChessRules {
 
     /**
      * Returns the set of all legal moves for a given position. The current player
-     * is determined from the position. In case of a mate ore stalemate an empty
+     * is determined from the position. In case of a mate or stalemate an empty
      * collection is the result. Thus the method never returns null.
      *
      * @param position game situation to examine
