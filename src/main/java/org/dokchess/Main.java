@@ -20,8 +20,8 @@ package org.dokchess;
 import org.dokchess.engine.DefaultEngine;
 import org.dokchess.engine.Engine;
 import org.dokchess.opening.OpeningLibrary;
-import org.dokchess.opening.polyglot.AuswahlModus;
 import org.dokchess.opening.polyglot.PolyglotOpeningBook;
+import org.dokchess.opening.polyglot.SelectionMode;
 import org.dokchess.rules.ChessRules;
 import org.dokchess.rules.DefaultChessRules;
 import org.dokchess.textui.xboard.XBoard;
@@ -63,7 +63,7 @@ public final class Main {
             } else {
                 try {
                     PolyglotOpeningBook pob = new PolyglotOpeningBook(eroeffnungen);
-                    pob.setAuswahlModus(AuswahlModus.HAEUFIGSTER);
+                    pob.setSelectionMode(SelectionMode.HAEUFIGSTER);
                     bibliothek = pob;
                 } catch (IOException e) {
                     System.err.printf(e.getMessage());

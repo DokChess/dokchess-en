@@ -32,7 +32,7 @@ import org.dokchess.domain.Position;
  *
  * @author StefanZ
  */
-public class ReineMaterialEvaluation implements Evaluation {
+public class StandardMaterialEvaluation implements Evaluation {
 
     @Override
     public int evaluatePosition(Position position, Colour pointOfView) {
@@ -42,7 +42,7 @@ public class ReineMaterialEvaluation implements Evaluation {
             for (int linie = 0; linie < 8; ++linie) {
                 Piece figur = position.getPiece(reihe, linie);
                 if (figur != null) {
-                    double wert = figurenWert(figur);
+                    double wert = pieceValue(figur);
                     if (figur.getColour() == pointOfView) {
                         summe += wert;
                     } else {
@@ -58,8 +58,8 @@ public class ReineMaterialEvaluation implements Evaluation {
     /**
      * Materialwert der Figur.
      */
-    protected int figurenWert(final Piece f) {
-        switch (f.getType()) {
+    protected int pieceValue(final Piece p) {
+        switch (p.getType()) {
             case PAWN:
                 return 1;
             case KNIGHT:

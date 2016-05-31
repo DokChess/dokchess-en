@@ -30,36 +30,36 @@ import java.util.List;
 
 public class PolyglotOpeningBook implements OpeningLibrary {
 
-    private AuswahlModus auswahlModus;
+    private SelectionMode selectionMode;
 
     private List<BookEntry> eintraege = new ArrayList<BookEntry>();
 
     public PolyglotOpeningBook(File datei) throws FileNotFoundException, IOException {
-        this.auswahlModus = AuswahlModus.ERSTER;
+        this.selectionMode = SelectionMode.ERSTER;
         readData(datei);
     }
 
     public PolyglotOpeningBook(InputStream is) throws FileNotFoundException, IOException {
-        this.auswahlModus = AuswahlModus.ERSTER;
+        this.selectionMode = SelectionMode.ERSTER;
         readData(is);
     }
 
 
-    public void setAuswahlModus(AuswahlModus auswahlModus) {
-        this.auswahlModus = auswahlModus;
+    public void setSelectionMode(SelectionMode selectionMode) {
+        this.selectionMode = selectionMode;
     }
 
     @Override
-    public Move lookUpMove(Position stellung) {
+    public Move lookUpMove(Position position) {
 
-        String fen = stellung.toString();
+        String fen = position.toString();
         List<BookEntry> treffer = findEntriesByFen(fen);
 
         if (treffer != null && treffer.size() > 0) {
 
-            if (auswahlModus == AuswahlModus.HAEUFIGSTER) {
+            if (selectionMode == SelectionMode.HAEUFIGSTER) {
                 Collections.sort(treffer);
-            } else if (auswahlModus == AuswahlModus.PER_ZUFALL) {
+            } else if (selectionMode == SelectionMode.PER_ZUFALL) {
                 Collections.shuffle(treffer);
             }
 
@@ -67,8 +67,8 @@ public class PolyglotOpeningBook implements OpeningLibrary {
 
             Square von = new Square(eintrag.getMoveFrom());
             Square nach = new Square(eintrag.getMoveTo());
-            Piece figur = stellung.getPiece(von);
-            boolean schlagen = stellung.getPiece(nach) != null;
+            Piece figur = position.getPiece(von);
+            boolean schlagen = position.getPiece(nach) != null;
 
             Move zug = new Move(figur, von, nach, schlagen);
 

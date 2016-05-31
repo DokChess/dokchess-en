@@ -28,13 +28,13 @@ import org.junit.Test;
  *
  * @author StefanZ
  */
-public class ReineMaterialEvaluationTest {
+public class StandardMaterialEvaluationTest {
 
     @Test
     public void beiGrundStellungKommt0raus() {
 
         Position stellung = new Position();
-        Evaluation evaluation = new ReineMaterialEvaluation();
+        Evaluation evaluation = new StandardMaterialEvaluation();
 
         int wert = evaluation.evaluatePosition(stellung, stellung.getToMove());
         Assert.assertEquals(Evaluation.BALANCED, wert);
@@ -45,7 +45,7 @@ public class ReineMaterialEvaluationTest {
 
         // Weiss hat eine Dame, schwarz einen Turm.
         Position stellung = new Position("8/Q1K5/8/8/8/6k1/6r1/8 w - - 0 1");
-        Evaluation evaluation = new ReineMaterialEvaluation();
+        Evaluation evaluation = new StandardMaterialEvaluation();
 
         int wert = evaluation.evaluatePosition(stellung, Colour.WHITE);
         Assert.assertTrue(wert > 0);

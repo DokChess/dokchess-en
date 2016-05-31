@@ -19,26 +19,26 @@ package org.dokchess.engine;
 
 import org.dokchess.domain.Move;
 import org.dokchess.domain.Position;
-import org.dokchess.engine.search.Suche;
+import org.dokchess.engine.search.Search;
 import rx.Observer;
 
 class AusSuche extends ZugErmitteln {
 
-    private Suche suche;
+    private Search search;
 
-    public AusSuche(final Suche suche) {
-        this(suche, null);
+    public AusSuche(final Search search) {
+        this(search, null);
     }
 
-    public AusSuche(final Suche suche,
+    public AusSuche(final Search search,
                     final ZugErmitteln nachfolger) {
         super(nachfolger);
-        this.suche = suche;
+        this.search = search;
     }
 
     @Override
     public void ermittelZug(Position stellung, Observer<Move> subject) {
-        suche.zugSuchen(stellung, subject);
+        search.searchMove(stellung, subject);
         super.ermittelZug(stellung, subject);
     }
 

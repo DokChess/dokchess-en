@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-public class AuswahlModusTest {
+public class SelectionModeTest {
 
     PolyglotOpeningBook buch = null;
 
@@ -42,7 +42,7 @@ public class AuswahlModusTest {
 
     @Test
     public void haeufigster() {
-        buch.setAuswahlModus(AuswahlModus.HAEUFIGSTER);
+        buch.setSelectionMode(SelectionMode.HAEUFIGSTER);
 
         Position stellung = new Position();
         List<BookEntry> eintraege = buch.findEntriesByFen(stellung.toString());
@@ -65,7 +65,7 @@ public class AuswahlModusTest {
 
     @Test
     public void erster() {
-        buch.setAuswahlModus(AuswahlModus.ERSTER);
+        buch.setSelectionMode(SelectionMode.ERSTER);
 
         Position stellung = new Position();
         List<BookEntry> eintraege = buch.findEntriesByFen(stellung.toString());
@@ -78,7 +78,7 @@ public class AuswahlModusTest {
 
     @Test
     public void zufaellig() {
-        buch.setAuswahlModus(AuswahlModus.PER_ZUFALL);
+        buch.setSelectionMode(SelectionMode.PER_ZUFALL);
 
         Position anfang = new Position();
         Move zug = buch.lookUpMove(anfang);

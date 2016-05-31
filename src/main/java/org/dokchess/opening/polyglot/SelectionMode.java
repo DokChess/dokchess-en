@@ -23,7 +23,7 @@ package org.dokchess.opening.polyglot;
  *
  * @author StefanZ
  */
-public enum AuswahlModus {
+public enum SelectionMode {
 
     /**
      * Der erste Zug in der Kandidatenliste wird ausgewaehlt.

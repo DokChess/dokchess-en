@@ -27,7 +27,7 @@ import rx.Observer;
  *
  * @author StefanZ
  */
-public interface Suche {
+public interface Search {
 
     /**
      * Startet eine Suche nach einem Zug f&uuml;r die angegebene Stellung.
@@ -36,20 +36,20 @@ public interface Suche {
      * Das Ende der Suche (keinen besseren Zug mehr gefunden) wird ebenfalls
      * an den Observer signalisiert.
      *
-     * @param stellung Stellung, auf der die Suche aufsetzt.
+     * @param position Stellung, auf der die Suche aufsetzt.
      * @param observer Observer, an den Suchergebnisse zu melden sind.
      */
-    void zugSuchen(Position stellung, Observer<Move> observer);
+    void searchMove(Position position, Observer<Move> observer);
 
     /**
      * Bricht die aktuelle Suche ab.
      */
-    void sucheAbbrechen();
+    void cancelSearch();
 
     /**
      * Schlie&szlig;t die Suche vollst&auml;ndig.
      * Anschlie&szlig;end d&uuml;rfen keine Z&uuml;ge mehr damit
      * ermittelt werden.
      */
-    void schliessen();
+    void close();
 }

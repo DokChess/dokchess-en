@@ -44,13 +44,13 @@ public interface Evaluation {
     int BALANCED = 0;
 
     /**
-     * Liefert zur gegebenen Stellung eine Bewertung aus Sicht der angegebenen
-     * Spielerfarbe. Je h&ouml;her, desto besser.
+     * Returns an evaluation value for the given position from the
+     * view of the specified player's color.
+     * The higher the better.
      *
-     * @param position zu bewertende Spielsituation
-     * @param pointOfView Spieler, aus desen Sicht bewertet wird
-     * @return Bewertung, 0 ist ausgeglichen, je h&ouml;her desto besser fuer
-     * den Spieler
+     * @param position position to evaluate
+     * @param pointOfView player, from which view to evaluate
+     * @return evaluation, 0 is balanced, the higher the better for the player
      */
     int evaluatePosition(Position position, Colour pointOfView);
 }

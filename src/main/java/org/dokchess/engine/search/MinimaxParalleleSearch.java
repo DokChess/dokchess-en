@@ -31,20 +31,20 @@ import java.util.concurrent.Executors;
 /**
  * Created by stefanz on 02.01.15.
  */
-public class MinimaxParalleleSuche extends MinimaxAlgorithmus implements Suche {
+public class MinimaxParalleleSearch extends MinimaxAlgorithmus implements Search {
 
     private ExecutorService executorService;
 
     private ReplaySubject<BewerteterZug> aktuelleSuchErgebnisse;
 
-    public MinimaxParalleleSuche() {
+    public MinimaxParalleleSearch() {
         int cores = Runtime.getRuntime().availableProcessors();
         executorService = Executors.newFixedThreadPool(cores);
     }
 
     @Override
-    public final void zugSuchen(Position stellung, Observer<Move> subject) {
-        Collection<Move> zuege = chessRules.getLegalMoves(stellung);
+    public final void searchMove(Position position, Observer<Move> subject) {
+        Collection<Move> zuege = chessRules.getLegalMoves(position);
         if (zuege.size() > 0) {
             ReplaySubject<BewerteterZug> suchErgebnisse = ReplaySubject.create();
             aktuelleSuchErgebnisse = suchErgebnisse;
@@ -53,7 +53,7 @@ public class MinimaxParalleleSuche extends MinimaxAlgorithmus implements Suche {
             suchErgebnisse.subscribe(melder);
 
             for (Move zug : zuege) {
-                EinzelnenZugUntersuchen zugUntersuchen = new EinzelnenZugUntersuchen(stellung, zug, suchErgebnisse);
+                EinzelnenZugUntersuchen zugUntersuchen = new EinzelnenZugUntersuchen(position, zug, suchErgebnisse);
                 suchErgebnisse.subscribe(zugUntersuchen);
                 executorService.execute(zugUntersuchen);
             }
@@ -63,7 +63,7 @@ public class MinimaxParalleleSuche extends MinimaxAlgorithmus implements Suche {
     }
 
     @Override
-    public final void sucheAbbrechen() {
+    public final void cancelSearch() {
         if (aktuelleSuchErgebnisse != null) {
             aktuelleSuchErgebnisse.onCompleted();
             aktuelleSuchErgebnisse = null;
@@ -71,8 +71,8 @@ public class MinimaxParalleleSuche extends MinimaxAlgorithmus implements Suche {
     }
 
     @Override
-    public void schliessen() {
-        this.sucheAbbrechen();
+    public void close() {
+        this.cancelSearch();
         this.executorService.shutdown();
     }
 

@@ -24,11 +24,10 @@ import org.dokchess.domain.Position;
 public interface OpeningLibrary {
 
     /**
-     * Liefert zur angegebenen Stellung einen aus der Bibliothek bekannten Zug,
-     * oder null.
+     * Returns a known move for the specified position from the library, or null.
      *
-     * @param stellung zu betrachtende Stellung
-     * @return passender Zug, oder null, falls keiner bekannt
+     * @param position game position to consider
+     * @return suitabe move, or null, if none avaliable in the library
      */
-    Move lookUpMove(Position stellung);
+    Move lookUpMove(Position position);
 }

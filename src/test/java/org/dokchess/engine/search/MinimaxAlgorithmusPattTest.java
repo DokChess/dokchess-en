@@ -20,7 +20,7 @@ package org.dokchess.engine.search;
 
 import org.dokchess.domain.Move;
 import org.dokchess.domain.Position;
-import org.dokchess.engine.eval.ReineMaterialEvaluation;
+import org.dokchess.engine.eval.StandardMaterialEvaluation;
 import org.dokchess.rules.DefaultChessRules;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,7 +36,7 @@ public class MinimaxAlgorithmusPattTest {
     @Before
     public void setup() {
         algorithmus = new MinimaxAlgorithmus();
-        algorithmus.setEvaluation(new ReineMaterialEvaluation());
+        algorithmus.setEvaluation(new StandardMaterialEvaluation());
         algorithmus.setChessRules(new DefaultChessRules());
     }
 
