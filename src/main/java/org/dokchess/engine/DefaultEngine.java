@@ -21,7 +21,7 @@ package org.dokchess.engine;
 import org.dokchess.domain.Move;
 import org.dokchess.domain.Position;
 import org.dokchess.engine.eval.StandardMaterialEvaluation;
-import org.dokchess.engine.search.MinimaxParalleleSearch;
+import org.dokchess.engine.search.MinimaxParallelSearch;
 import org.dokchess.opening.OpeningLibrary;
 import org.dokchess.rules.ChessRules;
 import rx.Observable;
@@ -50,8 +50,8 @@ public class DefaultEngine implements Engine {
 
         this.stellung = new Position();
 
-        MinimaxParalleleSearch minimax = new MinimaxParalleleSearch();
-        minimax.setTiefe(4);
+        MinimaxParallelSearch minimax = new MinimaxParallelSearch();
+        minimax.setDepth(4);
         minimax.setChessRules(chessRules);
         minimax.setEvaluation(new StandardMaterialEvaluation());
 

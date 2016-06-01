@@ -26,7 +26,7 @@ import org.dokchess.rules.ChessRules;
 
 import java.util.Collection;
 
-public class MinimaxAlgorithmus {
+public class MinimaxAlgorithm {
 
     protected ChessRules chessRules;
 
@@ -34,7 +34,7 @@ public class MinimaxAlgorithmus {
 
     private static final int MATT_BEWERTUNG = Evaluation.BEST / 2;
 
-    private int tiefe;
+    private int depth;
 
     /**
      * Setzt die Bewertungsfunktion, anhand derer die Stellungen bei Erreichen
@@ -53,35 +53,42 @@ public class MinimaxAlgorithmus {
     }
 
     /**
-     * Setzt die maximale Suchtiefe in Halbzuegen, das heisst bei 4 zieht jeder
-     * Spieler zweimal.
+     * Set the maximum search depth in half moves. That means at 4 each player moves twice.
      *
-     * @param tiefe Suchtiefe in Halbzuegen
+     * @param depth serach depth in half moves
      */
-    public void setTiefe(int tiefe) {
-        this.tiefe = tiefe;
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 
-    public Move ermittleBestenZug(Position stellung) {
+    /**
+     * Determines the optimal move according to minimax for the position passed and
+     * given evaluation at fixed search depth.
+     * The method blocks and is deterministic.
+     *
+     * @param position position to examine
+     * @return best move according to minimax
+     */
+    public Move determineBestMove(Position position) {
 
-        Colour spielerFarbe = stellung.getToMove();
-        Collection<Move> zuege = chessRules.getLegalMoves(stellung);
+        Colour playerColour = position.getToMove();
+        Collection<Move> moves = chessRules.getLegalMoves(position);
 
-        int besterWert = Evaluation.WORST;
-        Move besterZug = null;
+        int bestValue = Evaluation.WORST;
+        Move bestMove = null;
 
-        for (Move zug : zuege) {
-            Position neueStellung = stellung.performMove(zug);
+        for (Move move : moves) {
+            Position newPos = position.performMove(move);
 
-            int wert = bewerteStellungRekursiv(neueStellung, spielerFarbe);
+            int value = bewerteStellungRekursiv(newPos, playerColour);
 
-            if (wert > besterWert) {
-                besterWert = wert;
-                besterZug = zug;
+            if (value > bestValue) {
+                bestValue = value;
+                bestMove = move;
             }
         }
 
-        return besterZug;
+        return bestMove;
     }
 
 
@@ -93,7 +100,7 @@ public class MinimaxAlgorithmus {
     protected int bewerteStellungRekursiv(Position stellung, int aktuelleTiefe,
                                           Colour spielerFarbe) {
 
-        if (aktuelleTiefe == tiefe) {
+        if (aktuelleTiefe == depth) {
             return evaluation.evaluatePosition(stellung, spielerFarbe);
         } else {
             Collection<Move> zuege = chessRules.getLegalMoves(stellung);

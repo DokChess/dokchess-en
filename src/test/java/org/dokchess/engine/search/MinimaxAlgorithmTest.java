@@ -29,13 +29,13 @@ import org.junit.Test;
 /**
  * Einfache Tests fuer den Minimax-Algorithmus
  */
-public class MinimaxAlgorithmusTest {
+public class MinimaxAlgorithmTest {
 
-    private MinimaxAlgorithmus algorithmus;
+    private MinimaxAlgorithm algorithmus;
 
     @Before
     public void setup() {
-        algorithmus = new MinimaxAlgorithmus();
+        algorithmus = new MinimaxAlgorithm();
         algorithmus.setEvaluation(new StandardMaterialEvaluation());
         algorithmus.setChessRules(new DefaultChessRules());
     }
@@ -45,10 +45,10 @@ public class MinimaxAlgorithmusTest {
      */
     @Test
     public void grundstellung() {
-        algorithmus.setTiefe(4);
+        algorithmus.setDepth(4);
 
         Position stellung = new Position();
-        Move z = algorithmus.ermittleBestenZug(stellung);
+        Move z = algorithmus.determineBestMove(stellung);
         Assert.assertNotNull(z);
     }
 }

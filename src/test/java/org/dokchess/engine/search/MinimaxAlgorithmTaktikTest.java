@@ -26,32 +26,59 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * Tests fuer Matt im Minimax-Algorithmus
- */
-public class MinimaxAlgorithmusMattTest {
+import static org.dokchess.domain.Squares.*;
 
-    private MinimaxAlgorithmus algorithmus;
+/**
+ * Tests fuer verschiedene taktische Elemente im Schach.
+ *
+ * @author StefanZ
+ */
+public class MinimaxAlgorithmTaktikTest {
+
+    private MinimaxAlgorithm algorithmus;
 
     @Before
     public void setup() {
-        algorithmus = new MinimaxAlgorithmus();
+        algorithmus = new MinimaxAlgorithm();
         algorithmus.setEvaluation(new StandardMaterialEvaluation());
         algorithmus.setChessRules(new DefaultChessRules());
     }
 
-    /**
-     * Matt in einem Zug (Schaefermatt). Siegzug fuer weiss: Dame h5xf7
-     */
     @Test
-    public void schaeferMatt() {
-
-        algorithmus.setTiefe(2);
+    /**
+     * Beispiel, wo der weisse Koenig durch einen Laeufer aufgespiesst wird.
+     * Er gewinnt so die Dame.
+     *
+     * Quelle des Beispiels: Wikipedia.
+     * http://de.wikipedia.org/wiki/Spie%c3%9f_(Schach)
+     */
+    public void laeuferSpiess() {
+        algorithmus.setDepth(4);
 
         Position stellung = new Position(
-                "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 1");
-        Move z = algorithmus.ermittleBestenZug(stellung);
+                "8/3qkb2/8/8/4KB2/5Q2/8/8 b - - 0 1");
+        Move z = algorithmus.determineBestMove(stellung);
 
-        Assert.assertEquals("Q h5xf7", z.toString());
+        Assert.assertEquals(f7, z.getFrom());
+        Assert.assertEquals(d5, z.getTo());
+    }
+
+    @Test
+    /**
+     * Weiss gewinnt durch eine Gabel mit einem Bauern einen Turm.
+     *
+     * Quelle des Beispiels: Wikipedia.
+     * http://de.wikipedia.org/wiki/Gabel_(Schach)
+     */
+    public void bauernGabel() {
+        algorithmus.setDepth(4);
+
+        Position stellung = new Position(
+                "8/5k2/2r1r3/8/3P4/6P1/5PK1/8 w - - 0 1");
+        Move z = algorithmus.determineBestMove(stellung);
+
+        Assert.assertEquals(d4, z.getFrom());
+        Assert.assertEquals(d5, z.getTo());
+
     }
 }

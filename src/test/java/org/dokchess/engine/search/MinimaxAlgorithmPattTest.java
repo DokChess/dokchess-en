@@ -29,13 +29,13 @@ import org.junit.Test;
 /**
  * Tests fuer Patt im Minimax-Algorithmus
  */
-public class MinimaxAlgorithmusPattTest {
+public class MinimaxAlgorithmPattTest {
 
-    private MinimaxAlgorithmus algorithmus;
+    private MinimaxAlgorithm algorithmus;
 
     @Before
     public void setup() {
-        algorithmus = new MinimaxAlgorithmus();
+        algorithmus = new MinimaxAlgorithm();
         algorithmus.setEvaluation(new StandardMaterialEvaluation());
         algorithmus.setChessRules(new DefaultChessRules());
     }
@@ -48,10 +48,10 @@ public class MinimaxAlgorithmusPattTest {
      */
     @Test
     public void abwicklungZumPatt() {
-        algorithmus.setTiefe(4);
+        algorithmus.setDepth(4);
 
         Position stellung = new Position("1k6/1p5R/8/8/1q6/p7/P7/K7 w - - 0 1");
-        Move z = algorithmus.ermittleBestenZug(stellung);
+        Move z = algorithmus.determineBestMove(stellung);
 
         Assert.assertEquals("R h7xb7", z.toString());
     }
@@ -61,10 +61,10 @@ public class MinimaxAlgorithmusPattTest {
      */
     @Test
     public void keinZugBeiPatt() {
-        algorithmus.setTiefe(4);
+        algorithmus.setDepth(4);
 
         Position stellung = new Position("k7/8/1KN5/8/8/8/8/8 b - - 0 1");
-        Move z = algorithmus.ermittleBestenZug(stellung);
+        Move z = algorithmus.determineBestMove(stellung);
 
         Assert.assertNull(z);
     }

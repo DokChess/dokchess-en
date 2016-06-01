@@ -31,13 +31,13 @@ import java.util.concurrent.Executors;
 /**
  * Created by stefanz on 02.01.15.
  */
-public class MinimaxParalleleSearch extends MinimaxAlgorithmus implements Search {
+public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
 
     private ExecutorService executorService;
 
     private ReplaySubject<BewerteterZug> aktuelleSuchErgebnisse;
 
-    public MinimaxParalleleSearch() {
+    public MinimaxParallelSearch() {
         int cores = Runtime.getRuntime().availableProcessors();
         executorService = Executors.newFixedThreadPool(cores);
     }
