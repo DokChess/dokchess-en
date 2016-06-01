@@ -23,33 +23,30 @@ import org.dokchess.domain.Position;
 import rx.Observer;
 
 /**
- * Beischreibt eine (asynchrone) Suche nach Z&uuml;gen.
+ * Decribes an (asynchronous) search for moves.
  *
  * @author StefanZ
  */
 public interface Search {
 
     /**
-     * Startet eine Suche nach einem Zug f&uuml;r die angegebene Stellung.
-     * Liefert nach und nach bessere Z&uuml;ge als Ereignisse an den &uuml;bergebenen
-     * Observer.
-     * Das Ende der Suche (keinen besseren Zug mehr gefunden) wird ebenfalls
-     * an den Observer signalisiert.
+     * Starts a search for a move on the specified position.
+     * Returns gradually better moves as events on the passed observer.
+     * The end of the search (no better move found) is also signaled to the observer.
      *
-     * @param position Stellung, auf der die Suche aufsetzt.
-     * @param observer Observer, an den Suchergebnisse zu melden sind.
+     * @param position position where the search starts
+     * @param observer observer for notifications
      */
     void searchMove(Position position, Observer<Move> observer);
 
     /**
-     * Bricht die aktuelle Suche ab.
+     * Cancels the current search.
      */
     void cancelSearch();
 
     /**
-     * Schlie&szlig;t die Suche vollst&auml;ndig.
-     * Anschlie&szlig;end d&uuml;rfen keine Z&uuml;ge mehr damit
-     * ermittelt werden.
+     * Closes the search completely.
+     * No moves may be determined after calling this method.
      */
     void close();
 }
