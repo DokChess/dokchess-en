@@ -81,9 +81,9 @@ public class ZugParserTest {
     @Test
     public void rochadeNachXBoard() {
         ZugParser parser = new ZugParser();
-        Move rochadeKurz = new Move(WEISSER_KOENIG, Squares.e1, Squares.g1);
+        Move kingsideCastle = new Move(WEISSER_KOENIG, Squares.e1, Squares.g1);
 
-        String ausgabe = parser.nachXboard(rochadeKurz);
+        String ausgabe = parser.nachXboard(kingsideCastle);
         assertEquals("move e1g1", ausgabe);
     }
 

@@ -39,16 +39,16 @@ class CastlingMoves extends Movement {
                     if (areAllSquaresEmpty(position, f1, g1)
                             && noneOfSquaresAreAttacked(position, Colour.BLACK, e1,
                             f1, g1)) {
-                        Move rochadeKurz = new Move(WHITE_KING, e1, g1);
-                        target.add(rochadeKurz);
+                        Move kingsideCastle = new Move(WHITE_KING, e1, g1);
+                        target.add(kingsideCastle);
                     }
                 }
                 if (position.getCastlingsAvailable().contains(CastlingType.WHITE_QUEENSIDE)) {
                     if (areAllSquaresEmpty(position, b1, c1, d1)
                             && noneOfSquaresAreAttacked(position, Colour.BLACK, e1,
                             d1, c1)) {
-                        Move rochadeLang = new Move(WHITE_KING, e1, c1);
-                        target.add(rochadeLang);
+                        Move queensideCastle = new Move(WHITE_KING, e1, c1);
+                        target.add(queensideCastle);
                     }
                 }
                 break;
@@ -58,16 +58,16 @@ class CastlingMoves extends Movement {
                     if (areAllSquaresEmpty(position, f8, g8)
                             && noneOfSquaresAreAttacked(position, Colour.WHITE, e8, f8,
                             g8)) {
-                        Move rochadeKurz = new Move(BLACK_KING, e8, g8);
-                        target.add(rochadeKurz);
+                        Move kingsideCastle = new Move(BLACK_KING, e8, g8);
+                        target.add(kingsideCastle);
                     }
                 }
                 if (position.getCastlingsAvailable().contains(CastlingType.BLACK_QUEENSIDE)) {
                     if (areAllSquaresEmpty(position, b8, c8, d8)
                             && noneOfSquaresAreAttacked(position, Colour.WHITE, e8, d8,
                             c8)) {
-                        Move rochadeLang = new Move(BLACK_KING, e8, c8);
-                        target.add(rochadeLang);
+                        Move queensideCastle = new Move(BLACK_KING, e8, c8);
+                        target.add(queensideCastle);
                     }
                 }
                 break;
