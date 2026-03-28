@@ -36,19 +36,17 @@ final class Tools {
     }
 
     /**
-     * Prueft ob das angegebene Feld von einer Figur in der angegebenen Farbe
-     * angegriffen wird. Dabei ist unerheblich, ob das zu pruefende Feld besetzt
-     * ist. Die Methode kann daher sowohl fuer eine Schach/Matt-Pruefung,als
-     * auch auf gueltige Rochade eingesetzt werden.
+     * Returns whether the given square is attacked by any piece of the given colour.
+     * Occupancy of the square itself does not matter; the method is suitable for
+     * check / checkmate detection and for castling legality.
      *
-     * @param position Stellung, der die ggf. angreifenden Figuren entnommen werden
-     * @param square   zu pruefendes Feld
-     * @param colour   Farbe des potentiellen Angreifers
-     * @return true, falls das Feld von einer Figur passender Farbe angegriffen
-     * wird.
+     * @param position position to read attacking pieces from
+     * @param square   square to test
+     * @param colour   colour of the potential attacking side
+     * @return true if a piece of that colour attacks the square
      */
-    public static boolean istFeldAngegriffen(Position position, Square square,
-                                             Colour colour) {
+    public static boolean isSquareAttacked(Position position, Square square,
+                                           Colour colour) {
 
         // Schraeg (Dame/Laeufer)
         boolean dameLauferAngriff = istFeldAngegriffenInRichtung(position,

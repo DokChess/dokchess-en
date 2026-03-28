@@ -77,7 +77,7 @@ class CastlingMoves extends Movement {
     protected boolean noneOfSquaresAreAttacked(Position position,
                                                Colour attackingColour, Square... squares) {
         for (Square square : squares) {
-            if (Tools.istFeldAngegriffen(position, square, attackingColour)) {
+            if (Tools.isSquareAttacked(position, square, attackingColour)) {
                 return false;
             }
         }

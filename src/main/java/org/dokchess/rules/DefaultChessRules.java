@@ -102,7 +102,7 @@ public class DefaultChessRules implements ChessRules {
     @Override
     public boolean isCheck(Position position, Colour colour) {
         Square squareWithKing = position.findSquareWithKing(colour);
-        return Tools.istFeldAngegriffen(position, squareWithKing, colour.otherColour());
+        return Tools.isSquareAttacked(position, squareWithKing, colour.otherColour());
     }
 
     @Override
