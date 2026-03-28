@@ -26,7 +26,8 @@ import org.dokchess.domain.Square;
 import java.util.List;
 
 /**
- * Abstrakte Oberklasse fuer alle komplexen Gangarten im Schach, gibt eine Implementierung fuer {@link #fuegeZugkandidatenHinzu(Feld, Stellung, List)} vor.
+ * Abstract base class for complex piece-movement patterns in chess;
+ * provides a default implementation of {@link #addMoveCandidates(Square, Position, java.util.List)}.
  */
 public abstract class ComplexMovement extends Movement {
 
