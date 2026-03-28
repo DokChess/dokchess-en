@@ -26,8 +26,8 @@ import static org.dokchess.domain.Squares.*;
 
 class CastlingMoves extends Movement {
 
-    private static final Piece WEISSER_KOENIG = new Piece(PieceType.KING, Colour.WHITE);
-    private static final Piece SCHWARZER_KOENIG = new Piece(PieceType.KING, Colour.BLACK);
+    private static final Piece WHITE_KING = new Piece(PieceType.KING, Colour.WHITE);
+    private static final Piece BLACK_KING = new Piece(PieceType.KING, Colour.BLACK);
 
     @Override
     public void addMoveCandidates(Square from, Position position,
@@ -36,18 +36,18 @@ class CastlingMoves extends Movement {
         switch (position.getToMove()) {
             case WHITE:
                 if (position.getCastlingsAvailable().contains(CastlingType.WHITE_KINGSIDE)) {
-                    if (alleFelderFrei(position, f1, g1)
-                            && keinesDerFelderAngegriffen(position, Colour.BLACK, e1,
+                    if (areAllSquaresEmpty(position, f1, g1)
+                            && noneOfSquaresAreAttacked(position, Colour.BLACK, e1,
                             f1, g1)) {
-                        Move rochadeKurz = new Move(WEISSER_KOENIG, e1, g1);
+                        Move rochadeKurz = new Move(WHITE_KING, e1, g1);
                         target.add(rochadeKurz);
                     }
                 }
                 if (position.getCastlingsAvailable().contains(CastlingType.WHITE_QUEENSIDE)) {
-                    if (alleFelderFrei(position, b1, c1, d1)
-                            && keinesDerFelderAngegriffen(position, Colour.BLACK, e1,
+                    if (areAllSquaresEmpty(position, b1, c1, d1)
+                            && noneOfSquaresAreAttacked(position, Colour.BLACK, e1,
                             d1, c1)) {
-                        Move rochadeLang = new Move(WEISSER_KOENIG, e1, c1);
+                        Move rochadeLang = new Move(WHITE_KING, e1, c1);
                         target.add(rochadeLang);
                     }
                 }
@@ -55,18 +55,18 @@ class CastlingMoves extends Movement {
 
             case BLACK:
                 if (position.getCastlingsAvailable().contains(CastlingType.BLACK_KINGSIDE)) {
-                    if (alleFelderFrei(position, f8, g8)
-                            && keinesDerFelderAngegriffen(position, Colour.WHITE, e8, f8,
+                    if (areAllSquaresEmpty(position, f8, g8)
+                            && noneOfSquaresAreAttacked(position, Colour.WHITE, e8, f8,
                             g8)) {
-                        Move rochadeKurz = new Move(SCHWARZER_KOENIG, e8, g8);
+                        Move rochadeKurz = new Move(BLACK_KING, e8, g8);
                         target.add(rochadeKurz);
                     }
                 }
                 if (position.getCastlingsAvailable().contains(CastlingType.BLACK_QUEENSIDE)) {
-                    if (alleFelderFrei(position, b8, c8, d8)
-                            && keinesDerFelderAngegriffen(position, Colour.WHITE, e8, d8,
+                    if (areAllSquaresEmpty(position, b8, c8, d8)
+                            && noneOfSquaresAreAttacked(position, Colour.WHITE, e8, d8,
                             c8)) {
-                        Move rochadeLang = new Move(SCHWARZER_KOENIG, e8, c8);
+                        Move rochadeLang = new Move(BLACK_KING, e8, c8);
                         target.add(rochadeLang);
                     }
                 }
@@ -74,19 +74,19 @@ class CastlingMoves extends Movement {
         }
     }
 
-    protected boolean keinesDerFelderAngegriffen(Position stellung,
-                                                 Colour farbe, Square... felder) {
-        for (Square feld : felder) {
-            if (Tools.istFeldAngegriffen(stellung, feld, farbe)) {
+    protected boolean noneOfSquaresAreAttacked(Position position,
+                                               Colour attackingColour, Square... squares) {
+        for (Square square : squares) {
+            if (Tools.istFeldAngegriffen(position, square, attackingColour)) {
                 return false;
             }
         }
         return true;
     }
 
-    protected boolean alleFelderFrei(Position stellung, Square... felder) {
-        for (Square feld : felder) {
-            if (stellung.getPiece(feld) != null) {
+    protected boolean areAllSquaresEmpty(Position position, Square... squares) {
+        for (Square square : squares) {
+            if (position.getPiece(square) != null) {
                 return false;
             }
         }
