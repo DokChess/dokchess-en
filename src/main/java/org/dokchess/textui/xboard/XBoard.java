@@ -52,7 +52,7 @@ public class XBoard implements Observer<Move> {
 
     private Position stellung = new Position();
 
-    private ZugParser parser = new ZugParser();
+    private MoveParser moveParser = new MoveParser();
 
     /**
      * Setzt die Protokoll-Eingabe per Dependency Injection. Typischerweise ist
@@ -135,7 +135,7 @@ public class XBoard implements Observer<Move> {
                 continue;
             }
 
-            Move zug = parser.vonXboard(eingelesen, stellung);
+            Move zug = moveParser.fromXboard(eingelesen, stellung);
             if (zug != null) {
 
                 if (chessRules != null) {
@@ -184,7 +184,7 @@ public class XBoard implements Observer<Move> {
 
     @Override
     public void onCompleted() {
-        schreiben(parser.nachXboard(this.besterZug));
+        schreiben(moveParser.toXboard(this.besterZug));
         this.engine.performMove(this.besterZug);
         this.stellung = this.stellung.performMove(this.besterZug);
     }
