@@ -27,18 +27,22 @@ import java.util.Set;
 
 import static org.dokchess.domain.PieceType.*;
 
+/**
+ * Pawn moves: single and double advance, captures, and promotion.
+ */
 class PawnMoves extends Movement {
 
-    private static final Set<PieceType> CASTLING_OPTIONS;
+    private static final Set<PieceType> PROMOTION_PIECE_TYPES;
 
     static {
-        CASTLING_OPTIONS = EnumSet.noneOf(PieceType.class);
-        CASTLING_OPTIONS.add(QUEEN);
-        CASTLING_OPTIONS.add(ROOK);
-        CASTLING_OPTIONS.add(BISHOP);
-        CASTLING_OPTIONS.add(KNIGHT);
+        PROMOTION_PIECE_TYPES = EnumSet.noneOf(PieceType.class);
+        PROMOTION_PIECE_TYPES.add(QUEEN);
+        PROMOTION_PIECE_TYPES.add(ROOK);
+        PROMOTION_PIECE_TYPES.add(BISHOP);
+        PROMOTION_PIECE_TYPES.add(KNIGHT);
     }
 
+    @Override
     public void addMoveCandidates(Square from, Position position,
                                   List<Move> target) {
 
@@ -52,14 +56,14 @@ class PawnMoves extends Movement {
             Square to = new Square(from.getRank() + delta1, from.getFile());
             if (position.getPiece(to) == null) {
                 if (to.getRank() != 0 && to.getRank() != 7) {
-                    // Keine Umwandlung
-                    Move z = new Move(ownPawn, from, to);
-                    target.add(z);
+                    // no promotion
+                    Move move = new Move(ownPawn, from, to);
+                    target.add(move);
                 } else {
-                    // Castling
-                    for (PieceType newPiecetype : CASTLING_OPTIONS) {
-                        Move z = new Move(ownPawn, from, to, newPiecetype);
-                        target.add(z);
+                    // promotion (choose piece type)
+                    for (PieceType promotionPiece : PROMOTION_PIECE_TYPES) {
+                        Move move = new Move(ownPawn, from, to, promotionPiece);
+                        target.add(move);
                     }
                 }
             }
@@ -75,8 +79,8 @@ class PawnMoves extends Movement {
                     if (position.getPiece(startRank + delta2, from.getFile()) == null) {
                         Square to = new Square(startRank + delta2,
                                 from.getFile());
-                        Move z = new Move(ownPawn, from, to);
-                        target.add(z);
+                        Move move = new Move(ownPawn, from, to);
+                        target.add(move);
                     }
                 }
             }
@@ -91,22 +95,22 @@ class PawnMoves extends Movement {
             for (Square to : squares) {
                 if (to.getRank() != 0 && to.getRank() != 7) {
                     if (position.getPiece(to) != null) {
-                        // Schlagen, keine Umwandlung
-                        Move m = new Move(ownPawn, from, to, true);
-                        target.add(m);
+                        // capture without promotion
+                        Move move = new Move(ownPawn, from, to, true);
+                        target.add(move);
                     } else if (to.equals(position.getEnPassantSquare())) {
-                        // Schlagen, en passent
-                        Move m = new Move(ownPawn, from, to, true);
-                        target.add(m);
+                        // capture, en passant
+                        Move move = new Move(ownPawn, from, to, true);
+                        target.add(move);
                     }
 
                 } else {
                     if (position.getPiece(to) != null) {
-                        // Castling
-                        for (PieceType neueFigurenart : CASTLING_OPTIONS) {
-                            Move z = new Move(ownPawn, from, to, true,
-                                    neueFigurenart);
-                            target.add(z);
+                        // promotion with capture
+                        for (PieceType promotionPiece : PROMOTION_PIECE_TYPES) {
+                            Move move = new Move(ownPawn, from, to, true,
+                                    promotionPiece);
+                            target.add(move);
                         }
                     }
                 }

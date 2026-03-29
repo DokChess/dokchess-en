@@ -23,23 +23,27 @@ import org.dokchess.domain.Square;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Moves of the king (one step; castling is handled separately).
+ */
 class KingMoves extends ComplexMovement {
 
+    @Override
     protected List<Square> getReachableSquares(Position position,
                                                Square from) {
 
-        List<Square> felder = new ArrayList<Square>();
+        List<Square> squares = new ArrayList<Square>();
 
-        addSquareIfReachable(position, from, 0, 1, felder);
-        addSquareIfReachable(position, from, 0, -1, felder);
-        addSquareIfReachable(position, from, 1, 0, felder);
-        addSquareIfReachable(position, from, -1, 0, felder);
-        addSquareIfReachable(position, from, 1, 1, felder);
-        addSquareIfReachable(position, from, -1, -1, felder);
-        addSquareIfReachable(position, from, 1, -1, felder);
-        addSquareIfReachable(position, from, -1, 1, felder);
+        addSquareIfReachable(position, from, 0, 1, squares);
+        addSquareIfReachable(position, from, 0, -1, squares);
+        addSquareIfReachable(position, from, 1, 0, squares);
+        addSquareIfReachable(position, from, -1, 0, squares);
+        addSquareIfReachable(position, from, 1, 1, squares);
+        addSquareIfReachable(position, from, -1, -1, squares);
+        addSquareIfReachable(position, from, 1, -1, squares);
+        addSquareIfReachable(position, from, -1, 1, squares);
 
-        return felder;
+        return squares;
     }
 
 }

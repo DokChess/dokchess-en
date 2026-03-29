@@ -34,10 +34,10 @@ class RookMoves extends ComplexMovement {
     protected List<Square> getReachableSquares(Position position, Square from) {
         List<Square> squares = new ArrayList<Square>();
 
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, 0, 1, squares);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, 1, 0, squares);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, 0, -1, squares);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, -1, 0, squares);
+        addReachableSquaresInDirection(position, from, 0, 1, squares);
+        addReachableSquaresInDirection(position, from, 1, 0, squares);
+        addReachableSquaresInDirection(position, from, 0, -1, squares);
+        addReachableSquaresInDirection(position, from, -1, 0, squares);
 
         return squares;
     }

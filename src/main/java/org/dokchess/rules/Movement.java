@@ -32,8 +32,8 @@ import java.util.List;
 abstract class Movement {
 
     /**
-     * Ermittelt Zugkandidaten von einem Feld aus, und fuegt sie der uebergebenen Liste hinzu. Die Methode ist fuer
-     * die unterschiedlichen Gangarten der Figuren entsprechend zu implementieren.
+     * Computes move candidates from a square and appends them to the given list. Subclasses implement this
+     * according to how each piece type moves.
      *
      * @param from     source square which contains the moving piece
      * @param position position to examine
@@ -43,55 +43,54 @@ abstract class Movement {
                                     List<Move> target);
 
     /**
-     * Marschiert von einem Feld aus eine Richtung entlang und fuegt alle Felder einer Liste hinzu,
-     * die so erreichbar sind. Wird fuer Turm und aenliches verwendet.
+     * Steps from a square along a direction and appends every square that can be reached in a straight line.
+     * Used for rook-like sliding (and similar).
      *
      * @param position position to examine
-     * @param from     Startfeld, von dem losmarschiert wird.
-     * @param dx       direction dx
-     * @param dy       direction dy
-     * @param target   Zielliste fuer die erreichbaren Felder
+     * @param from     starting square
+     * @param dx       direction delta along file
+     * @param dy       direction delta along rank
+     * @param target   list to receive reachable squares
      */
-    protected final void fuegeFelderInRichtungHinzuFallsErreichbar(final Position position,
-                                                                   final Square from, final int dx, final int dy, final List<Square> target) {
+    protected final void addReachableSquaresInDirection(final Position position,
+                                                        final Square from, final int dx, final int dy, final List<Square> target) {
 
-        Piece figurDieZieht = position.getPiece(from);
-        boolean weiter = true;
-        int reihe = from.getRank();
-        int linie = from.getFile();
+        Piece movingPiece = position.getPiece(from);
+        boolean moreSquares = true;
+        int rank = from.getRank();
+        int file = from.getFile();
 
-        while (weiter) {
+        while (moreSquares) {
 
-            linie += dx;
-            reihe += dy;
+            file += dx;
+            rank += dy;
 
-            if (isOnBoard(reihe, linie)) {
-                Piece zuSchlagendeFigur = position.getPiece(reihe, linie);
-                if (zuSchlagendeFigur == null) {
-                    target.add(new Square(reihe, linie));
+            if (isOnBoard(rank, file)) {
+                Piece occupant = position.getPiece(rank, file);
+                if (occupant == null) {
+                    target.add(new Square(rank, file));
                 } else {
-                    if (zuSchlagendeFigur.getColour() != figurDieZieht
+                    if (occupant.getColour() != movingPiece
                             .getColour()) {
-                        // Schlagen
-                        target.add(new Square(reihe, linie));
+                        // capture
+                        target.add(new Square(rank, file));
                     }
-                    weiter = false;
+                    moreSquares = false;
                 }
             } else {
-                weiter = false;
+                moreSquares = false;
             }
         }
     }
 
     /**
-     * Guckt von einem Feld aus in Richtung eines anderes Feldes. Wenn es erreichbar ist, wird es einer
-     * Zielliste hinzugefuegt. Dabei wird beruecksichtigt, ob das Zielffeld frei ist, oder von einer gegnerischen
-     * Figur besetzt ist, die geschlagen werden kann.
+     * Looks one step from a square in the given direction. If that square is reachable, it is appended to the
+     * target list. The destination may be empty or occupied by an opponent piece that can be captured.
      *
      * @param position   position to examine
-     * @param from       source suare
-     * @param dx         direction dx
-     * @param dy         direction dy
+     * @param from       source square
+     * @param dx         direction delta along rank
+     * @param dy         direction delta along file
      * @param targetList target list for reachable squares
      */
     protected final void addSquareIfReachable(final Position position,
@@ -104,7 +103,7 @@ abstract class Movement {
             Piece pieceToMove = position.getPiece(from);
             Piece pieceToCapture = position.getPiece(toRank, toFile);
             if (pieceToCapture == null) {
-                // Move to a free sqaure
+                // move to an empty square
                 targetList.add(new Square(toRank, toFile));
             } else {
                 if (pieceToCapture.getColour() != pieceToMove.getColour()) {

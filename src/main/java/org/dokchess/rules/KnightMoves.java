@@ -23,8 +23,12 @@ import org.dokchess.domain.Square;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Moves of the knight.
+ */
 class KnightMoves extends ComplexMovement {
 
+    @Override
     protected List<Square> getReachableSquares(Position position,
                                                Square from) {
 

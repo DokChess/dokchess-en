@@ -24,6 +24,9 @@ import java.util.List;
 
 import static org.dokchess.domain.Squares.*;
 
+/**
+ * Castling: king moves generated when rooks and king have not moved and path is clear and safe.
+ */
 class CastlingMoves extends Movement {
 
     private static final Piece WHITE_KING = new Piece(PieceType.KING, Colour.WHITE);

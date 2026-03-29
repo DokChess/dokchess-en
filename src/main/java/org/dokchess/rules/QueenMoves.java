@@ -23,26 +23,29 @@ import org.dokchess.domain.Square;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Moves of the queen.
+ */
 class QueenMoves extends ComplexMovement {
 
+    @Override
     protected List<Square> getReachableSquares(Position position, Square from) {
 
-        List<Square> felder = new ArrayList<Square>();
+        List<Square> squares = new ArrayList<Square>();
 
-        // Gerade
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, 0, 1, felder);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, 1, 0, felder);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, 0, -1, felder);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, -1, 0, felder);
+        // Orthogonal (rook directions)
+        addReachableSquaresInDirection(position, from, 0, 1, squares);
+        addReachableSquaresInDirection(position, from, 1, 0, squares);
+        addReachableSquaresInDirection(position, from, 0, -1, squares);
+        addReachableSquaresInDirection(position, from, -1, 0, squares);
 
-        // Schraeg
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, 1, 1, felder);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, 1, -1, felder);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, -1, 1, felder);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, -1, -1,
-                felder);
+        // Diagonal (bishop directions)
+        addReachableSquaresInDirection(position, from, 1, 1, squares);
+        addReachableSquaresInDirection(position, from, 1, -1, squares);
+        addReachableSquaresInDirection(position, from, -1, 1, squares);
+        addReachableSquaresInDirection(position, from, -1, -1, squares);
 
-        return felder;
+        return squares;
     }
 
 }

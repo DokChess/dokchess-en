@@ -23,17 +23,20 @@ import org.dokchess.domain.Square;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Moves of the bishop.
+ */
 class BishopMoves extends ComplexMovement {
 
+    @Override
     protected List<Square> getReachableSquares(Position position, Square from) {
 
         List<Square> squares = new ArrayList<Square>();
 
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, 1, 1, squares);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, 1, -1, squares);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, -1, 1, squares);
-        fuegeFelderInRichtungHinzuFallsErreichbar(position, from, -1, -1,
-                squares);
+        addReachableSquaresInDirection(position, from, 1, 1, squares);
+        addReachableSquaresInDirection(position, from, 1, -1, squares);
+        addReachableSquaresInDirection(position, from, -1, 1, squares);
+        addReachableSquaresInDirection(position, from, -1, -1, squares);
 
         return squares;
     }
