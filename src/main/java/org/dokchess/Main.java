@@ -32,39 +32,39 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 /**
- * Startet DokChess auf der Kommandozeile. Verdrahtet stdin und stdout fuer das
- * XBoard-Protokoll und setzt die Eroeffnungsbibliothek, falls angegeben.
+ * Command-line entry point for DokChess. Wires stdin/stdout for the XBoard protocol
+ * and loads an opening book when a path is given.
  *
  * @author StefanZ
  */
 public final class Main {
 
     /**
-     * Konstruktor private, um keine Exemplare von dieser (Main-)Klasse bauen koennen.
+     * Private constructor so this class cannot be instantiated.
      */
     private Main() {
     }
 
     /**
-     * Einstiegspunkt. Startet das XBoard-Protokoll und die Engine.
+     * Starts the XBoard protocol (stdin/stdout) and the engine.
      *
-     * @param args Kommendozeilenparameter. Dateiname eines (optionalen) Eroeffnungsbuches.
+     * @param args optional command-line argument: path to a polyglot opening book file
      */
     public static void main(String[] args) {
 
-        OpeningLibrary bibliothek = null;
+        OpeningLibrary openingLibrary = null;
 
         if (args.length > 0) {
-            String dateiName = args[0];
-            File eroeffnungen = new File(dateiName);
-            if (!eroeffnungen.canRead()) {
-                System.err.printf("Kann Eroeffnungsbibliothek aus [%s] nicht lesen.%n", args[0]);
+            String fileName = args[0];
+            File openingBookFile = new File(fileName);
+            if (!openingBookFile.canRead()) {
+                System.err.printf("Cannot read opening book from [%s].%n", args[0]);
                 System.exit(1);
             } else {
                 try {
-                    PolyglotOpeningBook pob = new PolyglotOpeningBook(eroeffnungen);
-                    pob.setSelectionMode(SelectionMode.MOST_PLAYED);
-                    bibliothek = pob;
+                    PolyglotOpeningBook polyglotBook = new PolyglotOpeningBook(openingBookFile);
+                    polyglotBook.setSelectionMode(SelectionMode.MOST_PLAYED);
+                    openingLibrary = polyglotBook;
                 } catch (IOException e) {
                     System.err.printf(e.getMessage());
                     System.exit(1);
@@ -74,16 +74,16 @@ public final class Main {
         }
 
         ChessRules chessRules = new DefaultChessRules();
-        Engine engine = new DefaultEngine(chessRules, bibliothek);
+        Engine engine = new DefaultEngine(chessRules, openingLibrary);
 
-        XBoard xBoard = xBoardBauen();
+        XBoard xBoard = buildXBoard();
         xBoard.setEngine(engine);
         xBoard.setChessRules(chessRules);
 
         xBoard.play();
     }
 
-    static XBoard xBoardBauen() {
+    static XBoard buildXBoard() {
         XBoard xBoard = new XBoard();
 
         InputStreamReader isr = new InputStreamReader(System.in);

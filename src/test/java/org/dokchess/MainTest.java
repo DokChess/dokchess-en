@@ -27,7 +27,7 @@ public class MainTest {
 
     @Test
     public void xboardBauen() {
-        XBoard xboard = Main.xBoardBauen();
+        XBoard xboard = Main.buildXBoard();
         Assert.assertNotNull(xboard);
     }
 }
