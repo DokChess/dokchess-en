@@ -28,8 +28,7 @@ import static org.dokchess.domain.PieceType.ROOK;
 import static org.dokchess.domain.Squares.*;
 
 /**
- * Beschreibt eine Spielsituation. Hierzu zaehlen die Figuren auf dem
- * Brett(Stellung), die Farbe am Zug, Rochaderechte usw.
+ * Represents a chess position: piece placement, side to move, castling rights, etc.
  *
  * @author StefanZ
  */
@@ -47,16 +46,16 @@ public final class Position {
     private Set<CastlingType> castlingsAvailable;
 
     /**
-     * Creates the starting position. White begins.
+     * Creates the starting position. White moves first.
      */
     public Position() {
         this("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     }
 
     /**
-     * Creates a position from the FEN String representation
+     * Creates a position from a FEN string.
      *
-     * @param fen Stellung als zeichenkette in FEN-Notation
+     * @param fen position as a string in Forsyth–Edwards notation
      */
     public Position(final String fen) {
         this.board = new Piece[NUMBER_OF_RANKS][NUMBER_OF_FILES];
@@ -64,22 +63,22 @@ public final class Position {
     }
 
     /**
-     * Copy constructor. For internal use only (class is imutable anyway).
+     * Copy constructor. For internal use only (the class is effectively immutable to callers).
      *
-     * @param s
+     * @param source position to copy
      */
-    Position(Position s) {
-        this.toMove = s.toMove;
-        this.castlingsAvailable = s.castlingsAvailable;
-        this.enPassantSquare = s.enPassantSquare;
+    Position(Position source) {
+        this.toMove = source.toMove;
+        this.castlingsAvailable = source.castlingsAvailable;
+        this.enPassantSquare = source.enPassantSquare;
         this.board = new Piece[NUMBER_OF_RANKS][];
-        System.arraycopy(s.board, 0, this.board, 0, NUMBER_OF_RANKS);
+        System.arraycopy(source.board, 0, this.board, 0, NUMBER_OF_RANKS);
     }
 
     /**
-     * Returns which side is next to move.
+     * Returns which side is to move.
      *
-     * @return black or white
+     * @return {@link Colour#WHITE} or {@link Colour#BLACK}
      */
     public Colour getToMove() {
         return toMove;
@@ -90,11 +89,11 @@ public final class Position {
     }
 
     /**
-     * Return the piece at the given coordinates, or null if free.
+     * Returns the piece at the given coordinates, or {@code null} if the square is empty.
      *
-     * @param rank rank of the square
-     * @param file line of the sqaure
-     * @return piece occupying the square, or null if empty
+     * @param rank rank index (0–7)
+     * @param file file index (0–7)
+     * @return piece on the square, or {@code null} if empty
      */
     public Piece getPiece(int rank, int file) {
         return board[rank][file];
@@ -105,10 +104,10 @@ public final class Position {
     }
 
     /**
-     * Return the piece at the given square, or null if free.
+     * Returns the piece on the given square, or {@code null} if the square is empty.
      *
      * @param square the square
-     * @return piece occupying the square, or null if empty
+     * @return piece on the square, or {@code null} if empty
      */
     public Piece getPiece(Square square) {
         return board[square.getRank()][square.getFile()];
@@ -135,10 +134,10 @@ public final class Position {
     }
 
     /**
-     * Get a list of squares occupied by a certain piece (type and colour).
+     * Returns all squares occupied by a piece equal to the given one (type and colour).
      *
-     * @param piece searched piece
-     * @return list of sqaures occupied by this piece
+     * @param piece piece to search for
+     * @return squares where such a piece stands
      */
     public List<Square> findSquaresWith(final Piece piece) {
         List<Square> squares = new ArrayList<>();
@@ -156,18 +155,18 @@ public final class Position {
     }
 
     /**
-     * Get the sqaure with the given king, of null if he is missing.
+     * Returns the square of the king of the given colour, or {@code null} if that king is not on the board.
      *
      * @param colour colour of the king to find
-     * @return sqaure with this king, or null if none
+     * @return square of that king, or {@code null}
      */
     public Square findSquareWithKing(final Colour colour) {
-        for (int reihe = 0; reihe < NUMBER_OF_RANKS; ++reihe) {
-            for (int linie = 0; linie < NUMBER_OF_FILES; ++linie) {
-                Piece aktFigur = getPiece(reihe, linie);
-                if (aktFigur != null && aktFigur.is(KING)
-                        && aktFigur.is(colour)) {
-                    return new Square(reihe, linie);
+        for (int rank = 0; rank < NUMBER_OF_RANKS; ++rank) {
+            for (int file = 0; file < NUMBER_OF_FILES; ++file) {
+                Piece piece = getPiece(rank, file);
+                if (piece != null && piece.is(KING)
+                        && piece.is(colour)) {
+                    return new Square(rank, file);
                 }
             }
         }
@@ -175,69 +174,69 @@ public final class Position {
     }
 
     public Set<Square> squaresWithColour(final Colour colour) {
-        HashSet<Square> felder = new HashSet<Square>();
+        HashSet<Square> squares = new HashSet<Square>();
 
         for (int rank = 0; rank < NUMBER_OF_RANKS; ++rank) {
             for (int file = 0; file < NUMBER_OF_FILES; ++file) {
-                Piece aktFigur = getPiece(rank, file);
-                if (aktFigur != null && aktFigur.is(colour)) {
-                    felder.add(new Square(rank, file));
+                Piece piece = getPiece(rank, file);
+                if (piece != null && piece.is(colour)) {
+                    squares.add(new Square(rank, file));
                 }
             }
         }
 
-        return felder;
+        return squares;
     }
 
     public Position performMove(Move move) {
-        Position neueStellung = copyPositionWithAffectedRanks(this,
+        Position newPosition = copyPositionWithAffectedRanks(this,
                 move);
 
-
-
-        // move
-        neueStellung.setPiece(move.getFrom(), null);
-
+        // apply piece movement
+        newPosition.setPiece(move.getFrom(), null);
 
         if (move.isPromotion()) {
-            // Umwandlung des Bauern in neue Figur
-            neueStellung.setPiece(move.getTo(),
+            // pawn promoted to a new piece type
+            newPosition.setPiece(move.getTo(),
                     new Piece(move.getPromotion(), toMove));
         } else {
-            neueStellung.setPiece(move.getTo(), move.getPiece());
+            newPosition.setPiece(move.getTo(), move.getPiece());
         }
 
-        // En Passant Feld setzen
+        // en passant target square (if any)
         if (move.isPawnAdvancesTwo()) {
             int delta = move.getPiece().is(WHITE) ? -1 : +1;
-            neueStellung.enPassantSquare = new Square(move.getFrom().getRank()
+            newPosition.enPassantSquare = new Square(move.getFrom().getRank()
                     + delta, move.getFrom().getFile());
         } else {
-            neueStellung.enPassantSquare = null;
+            newPosition.enPassantSquare = null;
         }
 
         if (move.isCastling()) {
-            rochadeDurchfuehrenBehandeln(move, neueStellung);
+            completeCastling(move, newPosition);
         } else {
-            rochadeRechteKorrigieren(move, neueStellung);
+            adjustCastlingRights(move, newPosition);
         }
 
-        neueStellung.toMove = this.toMove.otherColour();
+        newPosition.toMove = this.toMove.otherColour();
 
-        return neueStellung;
+        return newPosition;
     }
 
     /**
-     * Check whether a castling is still allowed.
+     * Returns whether the given castling type is still allowed.
      *
-     * @param ct castling type, e.g. white king side
-     * @return true, if this castling is still allowed
+     * @param ct castling type, e.g. White kingside
+     * @return {@code true} if that castling is still available
      */
     public boolean castlingAllowed(final CastlingType ct) {
         return castlingsAvailable.contains(ct);
     }
 
-    private void rochadeDurchfuehrenBehandeln(Move move, Position newPos) {
+    /**
+     * After the king has moved for castling, moves the corresponding rook and updates castling rights.
+     */
+    private void completeCastling(Move move, Position newPos) {
         if (move.isCastlingKingside()) {
             newPos.castlingsAvailable = EnumSet.copyOf(castlingsAvailable);
             switch (getToMove()) {
@@ -273,9 +272,11 @@ public final class Position {
         }
     }
 
-    private void rochadeRechteKorrigieren(Move move, Position newPos) {
+    /**
+     * Updates castling rights when the move is not castling (king or rook moves may forfeit rights).
+     */
+    private void adjustCastlingRights(Move move, Position newPos) {
 
-        // Ggf. Rochaderechte loeschen
         if (castlingsAvailable.size() > 0) {
             if (move.getPiece().is(KING)) {
                 newPos.castlingsAvailable = EnumSet.copyOf(castlingsAvailable);
@@ -331,17 +332,17 @@ public final class Position {
     }
 
     /**
-     * Returns if the given square is free. I.e. no piece is on this square.
+     * Returns whether the given square is empty.
      *
-     * @param s sqaure to test
-     * @return true, if no piece on this square.
+     * @param s square to test
+     * @return {@code true} if no piece occupies the square
      */
     public boolean isFree(Square s) {
         return this.getPiece(s) == null;
     }
 
     /**
-     * Returns the position as FEN.
+     * Returns the position as a FEN string.
      */
     @Override
     public String toString() {
