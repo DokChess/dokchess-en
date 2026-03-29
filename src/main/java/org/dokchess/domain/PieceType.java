@@ -18,7 +18,7 @@
 package org.dokchess.domain;
 
 /**
- * Created by stefanz on 09.04.16.
+ * Piece kind (king, queen, rook, bishop, knight, pawn) and its letter in standard notation.
  */
 public enum PieceType {
 
@@ -54,8 +54,8 @@ public enum PieceType {
 
     /**
      * The pawn may move forward to the square immediately in front of it on the same
-     * file, provided that this square is unoccupied. on its first move the pawn may
-     * move advance two squares along the same file, provided that both squares are
+     * file, provided that this square is unoccupied. On its first move the pawn may
+     * advance two squares along the same file, provided that both squares are
      * unoccupied.
      */
     PAWN('P');
@@ -68,11 +68,11 @@ public enum PieceType {
 
     /**
      * Returns the piece type for a given letter as used in chess notations.
-     * Letter my be upper or lower case.
+     * The letter may be upper or lower case.
      *
-     * @param c letter, e.g. 'q' fuer queen.
-     * @return the piece type.
-     * @throws java.lang.IllegalArgumentException not a valid letter.
+     * @param c letter, e.g. {@code 'q'} for queen
+     * @return the piece type
+     * @throws java.lang.IllegalArgumentException if the letter is not valid
      */
     public static PieceType fromLetter(final char c) {
         switch (c) {
@@ -100,8 +100,8 @@ public enum PieceType {
     }
 
     /**
-     * Returns the letter for this piece type, as used in english notations.
-     * For instance Q for the queen.
+     * Returns the letter for this piece type, as used in English notation.
+     * For instance {@code Q} for the queen.
      *
      * @return letter for the piece type.
      */

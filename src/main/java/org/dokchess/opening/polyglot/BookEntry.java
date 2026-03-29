@@ -18,8 +18,8 @@
 package org.dokchess.opening.polyglot;
 
 /**
- * Ein einzelner Eintrag im Eroeffnungsbuch.
- * Die natuerliche Ordnung (Comparable) erfolgt nach Gewicht absteigend.
+ * One record in a Polyglot opening book.
+ * {@link Comparable} order is by weight, descending (higher weight first).
  *
  * @author StefanZ
  */
