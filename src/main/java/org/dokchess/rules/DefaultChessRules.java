@@ -21,6 +21,10 @@ import org.dokchess.domain.*;
 
 import java.util.*;
 
+/**
+ * Standard chess rules: legal moves, check, checkmate, and stalemate using the piece-movement
+ * helpers in this package and {@link Tools#isSquareAttacked} for king safety.
+ */
 public class DefaultChessRules implements ChessRules {
 
     private KnightMoves knightMoves = new KnightMoves();
@@ -109,20 +113,17 @@ public class DefaultChessRules implements ChessRules {
     public boolean isCheckmate(Position position) {
         Colour sideToMove = position.getToMove();
         if (isCheck(position, sideToMove)) {
-            Collection<Move> zuege = getLegalMoves(position);
-            if (zuege.size() == 0) {
-                return true;
-            }
+            return getLegalMoves(position).isEmpty();
         }
         return false;
     }
 
     @Override
     public boolean isStalemate(Position position) {
-        Collection<Move> moves = getLegalMoves(position);
-        if (moves.isEmpty()) {
-            Colour amZug = position.getToMove();
-            return !isCheck(position, amZug);
+        Collection<Move> legalMoves = getLegalMoves(position);
+        if (legalMoves.isEmpty()) {
+            Colour sideToMove = position.getToMove();
+            return !isCheck(position, sideToMove);
         }
         return false;
     }
