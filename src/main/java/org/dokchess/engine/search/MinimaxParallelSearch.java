@@ -35,7 +35,7 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
 
     private ExecutorService executorService;
 
-    private ReplaySubject<BewerteterZug> aktuelleSuchErgebnisse;
+    private ReplaySubject<RatedMove> aktuelleSuchErgebnisse;
 
     public MinimaxParallelSearch() {
         int cores = Runtime.getRuntime().availableProcessors();
@@ -46,7 +46,7 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
     public final void searchMove(Position position, Observer<Move> subject) {
         Collection<Move> zuege = chessRules.getLegalMoves(position);
         if (zuege.size() > 0) {
-            ReplaySubject<BewerteterZug> suchErgebnisse = ReplaySubject.create();
+            ReplaySubject<RatedMove> suchErgebnisse = ReplaySubject.create();
             aktuelleSuchErgebnisse = suchErgebnisse;
 
             ErgebnisMelden melder = new ErgebnisMelden(subject, zuege.size());
@@ -76,17 +76,17 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
         this.executorService.shutdown();
     }
 
-    class EinzelnenZugUntersuchen implements Runnable, Observer<BewerteterZug> {
+    class EinzelnenZugUntersuchen implements Runnable, Observer<RatedMove> {
 
         private Position stellung;
 
         private Move zug;
 
-        private ReplaySubject<BewerteterZug> suchErgebnisse;
+        private ReplaySubject<RatedMove> suchErgebnisse;
 
         private boolean berechnungBeendet = false;
 
-        EinzelnenZugUntersuchen(Position stellung, Move zug, ReplaySubject<BewerteterZug> suchErgebnisse) {
+        EinzelnenZugUntersuchen(Position stellung, Move zug, ReplaySubject<RatedMove> suchErgebnisse) {
             this.stellung = stellung;
             this.zug = zug;
             this.suchErgebnisse = suchErgebnisse;
@@ -98,7 +98,7 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
                 Colour spielerFarbe = stellung.getToMove();
                 Position nachZug = stellung.performMove(zug);
                 int wert = bewerteStellungRekursiv(nachZug, spielerFarbe);
-                suchErgebnisse.onNext(new BewerteterZug(zug, wert));
+                suchErgebnisse.onNext(new RatedMove(zug, wert));
             }
         }
 
@@ -113,11 +113,11 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
         }
 
         @Override
-        public void onNext(BewerteterZug bewerteterZug) {
+        public void onNext(RatedMove ratedMove) {
         }
     }
 
-    class ErgebnisMelden implements Observer<BewerteterZug> {
+    class ErgebnisMelden implements Observer<RatedMove> {
 
         private Observer<Move> subject;
 
@@ -125,7 +125,7 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
 
         private int anzahlBisher;
 
-        private BewerteterZug bester = null;
+        private RatedMove bester = null;
 
         public ErgebnisMelden(Observer<Move> subject, int anzahlKandidaten) {
             this.subject = subject;
@@ -141,11 +141,11 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
         }
 
         @Override
-        public synchronized void onNext(BewerteterZug bewerteterZug) {
+        public synchronized void onNext(RatedMove ratedMove) {
 
-            if (bester == null || bester.getWert() < bewerteterZug.getWert()) {
-                bester = bewerteterZug;
-                subject.onNext(bewerteterZug.getZug());
+            if (bester == null || bester.getRating() < ratedMove.getRating()) {
+                bester = ratedMove;
+                subject.onNext(ratedMove.getMove());
             }
 
             anzahlBisher += 1;

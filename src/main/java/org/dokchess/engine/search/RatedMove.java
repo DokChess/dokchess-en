@@ -21,29 +21,29 @@ package org.dokchess.engine.search;
 import org.dokchess.domain.Move;
 
 /**
- * Created by stefanz on 02.01.15.
+ * A {@link Move} together with its numeric evaluation from the search.
  */
-public class BewerteterZug implements Comparable<BewerteterZug> {
+public class RatedMove implements Comparable<RatedMove> {
 
-    private Move zug;
+    private Move move;
 
-    private int wert;
+    private int rating;
 
-    public BewerteterZug(Move zug, int wert) {
-        this.zug = zug;
-        this.wert = wert;
+    public RatedMove(Move move, int rating) {
+        this.move = move;
+        this.rating = rating;
     }
 
-    public Move getZug() {
-        return zug;
+    public Move getMove() {
+        return move;
     }
 
-    public int getWert() {
-        return wert;
+    public int getRating() {
+        return rating;
     }
 
     @Override
-    public int compareTo(BewerteterZug andererZug) {
-        return this.wert - andererZug.getWert();
+    public int compareTo(RatedMove other) {
+        return this.rating - other.getRating();
     }
 }
