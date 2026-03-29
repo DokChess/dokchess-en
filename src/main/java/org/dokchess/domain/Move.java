@@ -37,10 +37,10 @@ public final class Move {
     private final PieceType promotion;
 
     /**
-     * Creates a simple move. Moves a piece from a source sqaure to a target square.
-     * For a castling the king moves two squares in direction of the rook.
+     * Creates a simple move: a piece moves from a source square to a target square.
+     * For castling, the king moves two squares toward the rook.
      * <p/>
-     * For capture ans promotion other constructors are available.
+     * For captures and promotions, other constructors are available.
      *
      * @param piece     piece to move
      * @param from      source square
@@ -56,7 +56,7 @@ public final class Move {
      * @param piece     piece to move
      * @param from      source square
      * @param to        target square
-     * @param capture   is capture of a piece
+     * @param capture   whether a piece is captured
      * @param promotion new piece type in case of promotion
      */
     public Move(Piece piece, Square from, Square to, boolean capture,
@@ -74,14 +74,14 @@ public final class Move {
      * @param piece     piece to move
      * @param from      source square
      * @param to        target square
-     * @param capture   is capture of a piece
+     * @param capture   whether a piece is captured
      */
     public Move(Piece piece, Square from, Square to, boolean capture) {
         this(piece, from, to, capture, null);
     }
 
     /**
-     * * Creates a move.
+     * Creates a move.
      *
      * @param piece     piece to move
      * @param from      source square
@@ -93,36 +93,36 @@ public final class Move {
     }
 
     /**
-     * Get the source square of the move.
+     * Returns the source square of the move.
      *
-     * @return the source square.
+     * @return the source square
      */
     public Square getFrom() {
         return from;
     }
 
     /**
-     * Get the target square of the move.
+     * Returns the target square of the move.
      *
-     * @return the target sqaure.
+     * @return the target square
      */
     public Square getTo() {
         return to;
     }
 
     /**
-     * Returns the new piece type in case of a pawn promotion
+     * Returns the new piece type in case of pawn promotion.
      * <p/>
      * Possible values: QUEEN, ROOK, KNIGHT, BISHOP.
      *
-     * @return the piece type choosen, or null in case of no promotion.
+     * @return the chosen piece type, or {@code null} if there is no promotion
      */
     public PieceType getPromotion() {
         return promotion;
     }
 
     /**
-     * Returns the moving piece. In case of castling, this is a king, in case of promotion, it is a pawn.
+     * Returns the moving piece. For castling this is the king; for promotion it is still the pawn.
      *
      * @return the piece
      */
@@ -133,45 +133,44 @@ public final class Move {
     /**
      * Returns whether the move is a capture.
      *
-     * @return true, if a piece is captured.
+     * @return {@code true} if a piece is captured
      */
     public boolean isCapture() {
         return capture;
     }
 
     /**
-     * Returns whether the moving piece is a pawn. The move can be a "normal" move, a capture, a promotion ...
+     * Returns whether the moving piece is a pawn. The move may be a normal move, a capture, a promotion, etc.
      *
-     * @return true if the moving piece is a pawn.
+     * @return {@code true} if the moving piece is a pawn
      */
     public boolean isPawnMove() {
         return piece.getType() == PieceType.PAWN;
     }
 
     /**
-     * Liefert zurueck, ob mit dem Zug ein Bauer 2 Felder vor bewegt wird.
+     * Returns whether this move advances a pawn two squares from its starting rank.
      *
-     * @return true, falls ein Bauer zwei Feldet vor bewegt wird.
+     * @return {@code true} if a pawn moves two ranks forward
      */
-
     public boolean isPawnAdvancesTwo() {
-        return piece.getType() == PieceType.PAWN.PAWN
+        return piece.getType() == PieceType.PAWN
                 && Math.abs(from.getRank() - to.getRank()) == 2;
     }
 
     /**
-     * Liefert zur&uuml;ck, ob der Zug eine Umwandlung ist.
+     * Returns whether the move is a promotion.
      *
-     * @return true in case of a promotion.
+     * @return {@code true} in case of a promotion
      */
     public boolean isPromotion() {
         return promotion != null;
     }
 
     /**
-     * Liefert zur&uuml;ck, ob der Zug eine Rochade ist.
+     * Returns whether the move is castling.
      *
-     * @return true bei einer Rochade.
+     * @return {@code true} for a castling move
      */
     public boolean isCastling() {
         return piece.getType() == PieceType.KING
@@ -179,20 +178,20 @@ public final class Move {
     }
 
     /**
-     * Liefert zur&uuml;ck, ob der Zug eine kurze Rochade ist.
-     * Kurze Rochaden: e1 - g1 (weiss), e8 - g8 (schwarz).
+     * Returns whether the move is kingside castling (O-O).
+     * Kingside: e1–g1 (White), e8–g8 (Black).
      *
-     * @return true bei einer kurzen Rochade.
+     * @return {@code true} for kingside castling
      */
     public boolean isCastlingKingside() {
         return isCastling() && to.getFile() == 6;
     }
 
     /**
-     * Liefert zur&uuml;ck, ob der Zug eine lange Rochade ist.
-     * Lange Rochaden: e1 - c1 (weiss), e8 - c8 (schwarz).
+     * Returns whether the move is queenside castling (O-O-O).
+     * Queenside: e1–c1 (White), e8–c8 (Black).
      *
-     * @return true bei einer langen Rochade.
+     * @return {@code true} for queenside castling
      */
     public boolean isCastlingQueenside() {
         return isCastling() && to.getFile() == 2;
@@ -254,9 +253,9 @@ public final class Move {
     }
 
     /**
-     * Liefert eine schoene String-Reprasentation des Zuges zurueck.
+     * Returns a readable string representation of the move.
      *
-     * @return Zug als lesbare Zeichenkette
+     * @return the move as a human-readable string
      */
     @Override
     public String toString() {
