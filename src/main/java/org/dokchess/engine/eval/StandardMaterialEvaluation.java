@@ -22,13 +22,12 @@ import org.dokchess.domain.Piece;
 import org.dokchess.domain.Position;
 
 /**
- * Bewertung ausschliesslich anhand des Figurenwertes.
+ * Evaluation based solely on piece values.
  * <p/>
- * Jede Figurenart enth&auml;lt einen Wert (Bauer 1, Springer 3, ..., Dame 9),
- * die Figuren auf dem Brett werden entsprechend aufsummiert. Eigene Figuren
- * z&auml;hlen positiv, gegnerische negativ. Entsprechend ist bei ausgeglichenem
- * Material das Ergebnis 0, verliert man z.B. eine Dame, sinkt der Wert um 9. Es
- * spielt also keine Rolle, wo die Figur steht.
+ * Each piece type has a value (pawn 1, knight 3, …, queen 9); pieces on the board are summed
+ * accordingly. Own pieces count positive, opponent pieces negative. With equal material the
+ * score is 0; losing a queen, for example, lowers the score by 9. Square placement does not
+ * matter.
  *
  * @author StefanZ
  */
@@ -36,30 +35,30 @@ public class StandardMaterialEvaluation implements Evaluation {
 
     @Override
     public int evaluatePosition(Position position, Colour pointOfView) {
-        int summe = 0;
+        int total = 0;
 
-        for (int reihe = 0; reihe < 8; ++reihe) {
-            for (int linie = 0; linie < 8; ++linie) {
-                Piece figur = position.getPiece(reihe, linie);
-                if (figur != null) {
-                    double wert = pieceValue(figur);
-                    if (figur.getColour() == pointOfView) {
-                        summe += wert;
+        for (int rank = 0; rank < 8; ++rank) {
+            for (int file = 0; file < 8; ++file) {
+                Piece piece = position.getPiece(rank, file);
+                if (piece != null) {
+                    int value = pieceValue(piece);
+                    if (piece.getColour() == pointOfView) {
+                        total += value;
                     } else {
-                        summe -= wert;
+                        total -= value;
                     }
                 }
             }
         }
 
-        return summe;
+        return total;
     }
 
     /**
-     * Materialwert der Figur.
+     * Material value of the given piece.
      */
-    protected int pieceValue(final Piece p) {
-        switch (p.getType()) {
+    protected int pieceValue(final Piece piece) {
+        switch (piece.getType()) {
             case PAWN:
                 return 1;
             case KNIGHT:
