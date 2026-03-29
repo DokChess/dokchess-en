@@ -25,7 +25,7 @@ import java.util.Set;
 final class Tools {
 
     private static final Set<PieceType> QUEEN_BISHOP = EnumSet.of(PieceType.QUEEN,
-            PieceType.KING.BISHOP);
+            PieceType.BISHOP);
     private static final Set<PieceType> QUEEN_ROOK = EnumSet.of(PieceType.QUEEN,
             PieceType.ROOK);
 
@@ -48,125 +48,137 @@ final class Tools {
     public static boolean isSquareAttacked(Position position, Square square,
                                            Colour colour) {
 
-        // Schraeg (Dame/Laeufer)
-        boolean dameLauferAngriff = istFeldAngegriffenInRichtung(position,
+        // Diagonal (queen / bishop)
+        boolean bishopOrQueenDiagonalAttack = isAttackedAlongRay(position,
                 square, colour, 1, 1, QUEEN_BISHOP)
-                || istFeldAngegriffenInRichtung(position, square, colour, -1, -1,
+                || isAttackedAlongRay(position, square, colour, -1, -1,
                 QUEEN_BISHOP)
-                || istFeldAngegriffenInRichtung(position, square, colour, 1, -1,
+                || isAttackedAlongRay(position, square, colour, 1, -1,
                 QUEEN_BISHOP)
-                || istFeldAngegriffenInRichtung(position, square, colour, -1, 1,
+                || isAttackedAlongRay(position, square, colour, -1, 1,
                 QUEEN_BISHOP);
-        if (dameLauferAngriff) {
+        if (bishopOrQueenDiagonalAttack) {
             return true;
         }
 
-        // Gerade (Dame/Turm)
-        boolean dameTurmAngriff = istFeldAngegriffenInRichtung(position, square,
+        // Orthogonal (queen / rook)
+        boolean rookOrQueenLineAttack = isAttackedAlongRay(position, square,
                 colour, 1, 0, QUEEN_ROOK)
-                || istFeldAngegriffenInRichtung(position, square, colour, 0, 1,
+                || isAttackedAlongRay(position, square, colour, 0, 1,
                 QUEEN_ROOK)
-                || istFeldAngegriffenInRichtung(position, square, colour, -1, 0,
+                || isAttackedAlongRay(position, square, colour, -1, 0,
                 QUEEN_ROOK)
-                || istFeldAngegriffenInRichtung(position, square, colour, 0, -1,
+                || isAttackedAlongRay(position, square, colour, 0, -1,
                 QUEEN_ROOK);
-        if (dameTurmAngriff) {
+        if (rookOrQueenLineAttack) {
             return true;
         }
 
-        // Springer
-        boolean springerAngriff = istFeldAngegriffenVonFeld(position, square,
+        // Knight
+        boolean knightAttack = isSquareAttackedFromSquare(position, square,
                 colour, 1, 2, PieceType.KNIGHT)
-                || istFeldAngegriffenVonFeld(position, square, colour, 1, -2,
+                || isSquareAttackedFromSquare(position, square, colour, 1, -2,
                 PieceType.KNIGHT)
-                || istFeldAngegriffenVonFeld(position, square, colour, -1, 2,
+                || isSquareAttackedFromSquare(position, square, colour, -1, 2,
                 PieceType.KNIGHT)
-                || istFeldAngegriffenVonFeld(position, square, colour, -1, -2,
+                || isSquareAttackedFromSquare(position, square, colour, -1, -2,
                 PieceType.KNIGHT)
-                || istFeldAngegriffenVonFeld(position, square, colour, 2, 1,
+                || isSquareAttackedFromSquare(position, square, colour, 2, 1,
                 PieceType.KNIGHT)
-                || istFeldAngegriffenVonFeld(position, square, colour, 2, -1,
+                || isSquareAttackedFromSquare(position, square, colour, 2, -1,
                 PieceType.KNIGHT)
-                || istFeldAngegriffenVonFeld(position, square, colour, -2, 1,
+                || isSquareAttackedFromSquare(position, square, colour, -2, 1,
                 PieceType.KNIGHT)
-                || istFeldAngegriffenVonFeld(position, square, colour, -2, -1,
+                || isSquareAttackedFromSquare(position, square, colour, -2, -1,
                 PieceType.KNIGHT);
-        if (springerAngriff) {
+        if (knightAttack) {
             return true;
         }
 
-        // Bauer
-        int delta = colour == Colour.WHITE ? +1 : -1;
-        boolean bauernAngriff = istFeldAngegriffenVonFeld(position, square,
-                colour, 1, delta, PieceType.PAWN)
-                || istFeldAngegriffenVonFeld(position, square, colour, -1, delta,
+        // Pawn
+        int pawnRankDelta = colour == Colour.WHITE ? +1 : -1;
+        boolean pawnAttack = isSquareAttackedFromSquare(position, square,
+                colour, 1, pawnRankDelta, PieceType.PAWN)
+                || isSquareAttackedFromSquare(position, square, colour, -1, pawnRankDelta,
                 PieceType.PAWN);
-        if (bauernAngriff) {
+        if (pawnAttack) {
             return true;
         }
 
-        // Koenig
-        boolean koenigsAngriff = istFeldAngegriffenVonFeld(position, square,
+        // King
+        boolean kingAttack = isSquareAttackedFromSquare(position, square,
                 colour, 0, 1, PieceType.KING)
-                || istFeldAngegriffenVonFeld(position, square, colour, 0, -1,
+                || isSquareAttackedFromSquare(position, square, colour, 0, -1,
                 PieceType.KING)
-                || istFeldAngegriffenVonFeld(position, square, colour, 1, 0,
+                || isSquareAttackedFromSquare(position, square, colour, 1, 0,
                 PieceType.KING)
-                || istFeldAngegriffenVonFeld(position, square, colour, -1, 0,
+                || isSquareAttackedFromSquare(position, square, colour, -1, 0,
                 PieceType.KING)
-                || istFeldAngegriffenVonFeld(position, square, colour, 1, 1,
+                || isSquareAttackedFromSquare(position, square, colour, 1, 1,
                 PieceType.KING)
-                || istFeldAngegriffenVonFeld(position, square, colour, 1, -1,
+                || isSquareAttackedFromSquare(position, square, colour, 1, -1,
                 PieceType.KING)
-                || istFeldAngegriffenVonFeld(position, square, colour, -1, 1,
+                || isSquareAttackedFromSquare(position, square, colour, -1, 1,
                 PieceType.KING)
-                || istFeldAngegriffenVonFeld(position, square, colour, -1, -1,
+                || isSquareAttackedFromSquare(position, square, colour, -1, -1,
                 PieceType.KING);
 
-        if (koenigsAngriff) {
+        if (kingAttack) {
             return true;
         }
 
         return false;
     }
 
-    private static boolean istFeldAngegriffenInRichtung(Position position,
-                                                        Square square, Colour colour, int dx, int dy, Set<PieceType> pieceTypes) {
+    /**
+     * Walks along a ray from {@code square} in direction ({@code dFile}, {@code dRank}) and returns
+     * whether the first piece encountered on that ray is of {@code colour} and has a type in {@code pieceTypes}.
+     * File and rank deltas match {@link Movement#addReachableSquaresInDirection}.
+     */
+    private static boolean isAttackedAlongRay(Position position,
+                                              Square square, Colour colour, int dFile, int dRank,
+                                              Set<PieceType> pieceTypes) {
 
         int rank = square.getRank();
         int file = square.getFile();
-        boolean weiter = true;
+        boolean moreSquares = true;
 
-        while (weiter) {
+        while (moreSquares) {
 
-            file += dx;
-            rank += dy;
+            file += dFile;
+            rank += dRank;
 
             if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
-                Piece figur = position.getPiece(rank, file);
-                if (figur != null) {
-                    weiter = false;
-                    if (figur.getColour() == colour) {
-                        if (pieceTypes.contains(figur.getType())) {
+                Piece piece = position.getPiece(rank, file);
+                if (piece != null) {
+                    moreSquares = false;
+                    if (piece.getColour() == colour) {
+                        if (pieceTypes.contains(piece.getType())) {
                             return true;
                         }
                     }
                 }
             } else {
-                weiter = false;
+                moreSquares = false;
             }
         }
         return false;
     }
 
-    private static boolean istFeldAngegriffenVonFeld(Position position,
-                                                     Square square, Colour colour, int dx, int dy, PieceType pieceType) {
+    /**
+     * Literal translation of {@code istFeldAngegriffenVonFeld}: whether {@code square} is attacked
+     * from the square one step away in direction ({@code dFile}, {@code dRank}) — i.e. whether that
+     * neighbour square contains a piece of {@code colour} and {@code pieceType} (knight, king, pawn).
+     */
+    private static boolean isSquareAttackedFromSquare(Position position,
+                                                        Square square, Colour colour, int dFile,
+                                                        int dRank, PieceType pieceType) {
 
-        int linie = square.getFile() + dx;
-        int reihe = square.getRank() + dy;
+        int file = square.getFile() + dFile;
+        int rank = square.getRank() + dRank;
 
-        if (linie >= 0 && linie < 8 && reihe >= 0 && reihe < 8) {
-            Piece piece = position.getPiece(reihe, linie);
+        if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
+            Piece piece = position.getPiece(rank, file);
             if (piece != null) {
                 if (piece.getColour() == colour) {
                     if (piece.getType() == pieceType) {
