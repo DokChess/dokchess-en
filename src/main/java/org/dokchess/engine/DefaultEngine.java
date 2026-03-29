@@ -37,7 +37,7 @@ import rx.subjects.ReplaySubject;
  */
 public class DefaultEngine implements Engine {
 
-    private Position stellung;
+    private Position position;
 
     private DetermineMove movePipeline;
 
@@ -48,7 +48,7 @@ public class DefaultEngine implements Engine {
     public DefaultEngine(ChessRules chessRules,
                          OpeningLibrary openingLibrary) {
 
-        this.stellung = new Position();
+        this.position = new Position();
 
         MinimaxParallelSearch minimax = new MinimaxParallelSearch();
         minimax.setDepth(4);
@@ -67,20 +67,20 @@ public class DefaultEngine implements Engine {
 
     @Override
     public void setupPieces(Position position) {
-        this.stellung = position;
+        this.position = position;
         movePipeline.cancelCurrentSearch();
     }
 
     @Override
     public Observable<Move> determineYourMove() {
         ReplaySubject<Move> subject = ReplaySubject.create();
-        movePipeline.determineMove(stellung, subject);
+        movePipeline.determineMove(this.position, subject);
         return subject;
     }
 
     @Override
     public void performMove(Move move) {
-        stellung = stellung.performMove(move);
+        position = position.performMove(move);
         movePipeline.cancelCurrentSearch();
     }
 

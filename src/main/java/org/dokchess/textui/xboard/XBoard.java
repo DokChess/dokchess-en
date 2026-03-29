@@ -32,7 +32,8 @@ import java.io.Writer;
 import java.util.Collection;
 
 /**
- * Implementierung des XBoard-Protokolls. Enthaelt nur die wichtigsten Befehle.
+ * XBoard protocol adapter over a {@link Reader}/{@link Writer} pair. Implements
+ * a small subset of commands sufficient to drive the engine from a GUI.
  *
  * @author StefanZ
  */
@@ -40,7 +41,7 @@ public class XBoard implements Observer<Move> {
 
     private Reader input;
 
-    private BufferedReader bufEingabe;
+    private BufferedReader bufferedReader;
 
     private Writer output;
 
@@ -48,133 +49,129 @@ public class XBoard implements Observer<Move> {
 
     private Engine engine;
 
-    private Move besterZug;
+    private Move bestMove;
 
-    private Position stellung = new Position();
+    private Position position = new Position();
 
     private MoveParser moveParser = new MoveParser();
 
     /**
-     * Setzt die Protokoll-Eingabe per Dependency Injection. Typischerweise ist
-     * das die Standardeingabe (stdin); z.B. f&uuml;r automatische Tests kann
-     * eine andere Quelle verwendet werden.
+     * Sets protocol input (dependency injection). Typically {@link System#in};
+     * tests may supply another {@link Reader}.
      *
-     * @param input
+     * @param input character source for incoming commands
      */
     public void setInput(Reader input) {
         this.input = input;
-        this.bufEingabe = new BufferedReader(this.input);
+        this.bufferedReader = new BufferedReader(this.input);
     }
 
     /**
-     * Setzt die Protokoll-Ausgabe. Typischerweise ist das die Standardausgabe
-     * (stdout), f&uuml;r automatische Tests kann eine andere Senke verwendet
-     * werden.
+     * Sets protocol output. Typically {@link System#out}; tests may use a
+     * {@link java.io.StringWriter} or other {@link Writer}.
      *
-     * @param output die Ausgabe
+     * @param output sink for outgoing lines
      */
     public void setOutput(Writer output) {
         this.output = output;
     }
 
     /**
-     * Setzt eine Implementierung der Spielregeln. Optional, ohne Spielregeln
-     * werden die eingehenden Zuege nicht geprueft.
+     * Sets chess rules for validating opponent moves. Optional: if {@code null},
+     * incoming moves are not checked against the rule set.
      *
-     * @param chessRules die Spielregeln
+     * @param chessRules rules implementation, or {@code null}
      */
     public void setChessRules(ChessRules chessRules) {
         this.chessRules = chessRules;
     }
 
     /**
-     * Setzt eine Implementierung der Engine. Erforderlich zum Spielen.
+     * Sets the engine that selects moves. Required for play.
      *
-     * @param engine die Engine
+     * @param engine engine implementation
      */
     public void setEngine(Engine engine) {
         this.engine = engine;
     }
 
     /**
-     * Startet die eigentliche Kommunikation (Eingabe/Verarbeitung/Ausgabe) in
-     * einer Endlosschleife, bis zum Beenden-Kommando.
+     * Runs the read/process/write loop until a quit command or end of input.
      */
     public void play() {
-
 
         boolean running = true;
         while (running) {
 
-            String eingelesen = lesen();
+            String line = readLine();
 
-            if (eingelesen == null || eingelesen.equals("quit")) {
+            if (line == null || line.equals("quit")) {
                 running = false;
                 continue;
             }
 
-            if (eingelesen.equals("xboard")) {
-                schreiben("");
+            if (line.equals("xboard")) {
+                writeLine("");
                 continue;
             }
 
-            if (eingelesen.equals("protover 2")) {
-                schreiben("feature done=1");
+            if (line.equals("protover 2")) {
+                writeLine("feature done=1");
                 continue;
             }
 
-            if (eingelesen.equals("new")) {
-                stellung = new Position();
-                engine.setupPieces(stellung);
+            if (line.equals("new")) {
+                position = new Position();
+                engine.setupPieces(position);
                 continue;
             }
 
-            if (eingelesen.equals("go")) {
-                Observable<Move> s = engine.determineYourMove();
-                s.subscribe(this);
+            if (line.equals("go")) {
+                Observable<Move> moveObservable = engine.determineYourMove();
+                moveObservable.subscribe(this);
                 continue;
             }
 
-            Move zug = moveParser.fromXboard(eingelesen, stellung);
-            if (zug != null) {
+            Move move = moveParser.fromXboard(line, position);
+            if (move != null) {
 
                 if (chessRules != null) {
-                    Collection<Move> gueltigeZuege = chessRules
-                            .getLegalMoves(stellung);
-                    if (!gueltigeZuege.contains(zug)) {
-                        schreiben("Illegal move: " + eingelesen);
+                    Collection<Move> legalMoves = chessRules
+                            .getLegalMoves(position);
+                    if (!legalMoves.contains(move)) {
+                        writeLine("Illegal move: " + line);
                         continue;
                     }
                 }
 
-                engine.performMove(zug);
-                stellung = stellung.performMove(zug);
+                engine.performMove(move);
+                position = position.performMove(move);
 
-                Observable<Move> s = engine.determineYourMove();
-                s.subscribe(this);
+                Observable<Move> moveObservable = engine.determineYourMove();
+                moveObservable.subscribe(this);
                 continue;
             }
 
-            schreiben("Error (unknown command): " + eingelesen);
+            writeLine("Error (unknown command): " + line);
         }
 
         engine.close();
     }
 
-    String lesen() {
-        String zeile = null;
+    String readLine() {
+        String line = null;
         try {
-            zeile = bufEingabe.readLine();
+            line = bufferedReader.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return zeile;
+        return line;
     }
 
-    void schreiben(String zeile) {
+    void writeLine(String line) {
         try {
             synchronized (output) {
-                output.write(zeile + "\n");
+                output.write(line + "\n");
                 output.flush();
             }
         } catch (IOException e) {
@@ -184,19 +181,19 @@ public class XBoard implements Observer<Move> {
 
     @Override
     public void onCompleted() {
-        schreiben(moveParser.toXboard(this.besterZug));
-        this.engine.performMove(this.besterZug);
-        this.stellung = this.stellung.performMove(this.besterZug);
+        writeLine(moveParser.toXboard(this.bestMove));
+        this.engine.performMove(this.bestMove);
+        this.position = this.position.performMove(this.bestMove);
     }
 
     @Override
     public void onError(Throwable e) {
-        schreiben("tellusererror " + e.getMessage());
+        writeLine("tellusererror " + e.getMessage());
     }
 
     @Override
-    public void onNext(Move zug) {
-        schreiben("# better move found: " + zug);
-        this.besterZug = zug;
+    public void onNext(Move move) {
+        writeLine("# better move found: " + move);
+        this.bestMove = move;
     }
 }
