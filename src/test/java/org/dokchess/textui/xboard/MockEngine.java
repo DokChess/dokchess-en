@@ -61,7 +61,7 @@ public class MockEngine implements Engine {
     }
 
     @Override
-    public void performMove(Move zug) {
+    public void performMove(Move move) {
     }
 
     @Override

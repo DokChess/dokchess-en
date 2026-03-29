@@ -22,10 +22,9 @@ import org.dokchess.domain.Position;
 import rx.Observable;
 
 /**
- * Zentrale Schnittstelle des Engine-Subsystems. Ermittlung des n&auml;chsten
- * Zuges, ausgehend von einer Spielsituation. Diese Situation kann von aussen
- * vorgegeben werden. Die Engine ist zustandsbehaftet und spielt stets eine
- * Partie zur gleichen Zeit.
+ * Core API of the engine subsystem. The engine chooses moves from a game position;
+ * that position can be supplied from outside. The engine is stateful and plays
+ * one game at a time.
  *
  * @author StefanZ
  */
@@ -40,25 +39,24 @@ public interface Engine {
     void setupPieces(Position position);
 
     /**
-     * Starts the determination of a move for the current game situation.
-     * Returns move candidates asynchronously via an Observable.
-     * The engine does not perform the moves.
+     * Starts move selection for the current position. The method is non-blocking:
+     * the engine may compute in the background. Better moves are reported via
+     * {@code onNext} on the returned {@link Observable}; the end of the search
+     * is signaled with {@code onCompleted}. The engine does not apply moves to
+     * its internal position; callers use {@link #performMove(Move)} for that.
      *
-     * Als Ergebnis wird ein Observable zur&uuml;ckgeliefert,
-     * d.h. die Methode blockiert nicht, die Engine rechnet ggf. im Hintergrund.
-     * Neue beste Z&uuml;ge werden &uuml;ber onNext() gemeldet, das Ende der Berechnung mit onComplete.
-     *
-     * @return Observable, ueber das der beste Zug aus Sicht der Engine &uuml;bermittelt wird, sowie Zwischenergebnisse.
+     * @return observable stream of the engine's chosen move (and possibly
+     *         intermediate improvements)
      */
     Observable<Move> determineYourMove();
 
     /**
-     * F&uuml;hrt den angegebenen Zug aus, d.h. &auml;ndert den Zustand der
-     * Engine. Falls aktuell eine Zugermittlung l&auml;uft, wird diese abgebrochen.
+     * Applies the given move to the engine's internal game state. If a move
+     * search is in progress, it is cancelled.
      *
-     * @param zug der auszuf&uuml;rende Zug.
+     * @param move the move to play
      */
-    void performMove(Move zug);
+    void performMove(Move move);
 
     /**
      * Closes the engine. The method makes it possible to free resources.

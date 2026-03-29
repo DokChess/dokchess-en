@@ -28,10 +28,10 @@ import rx.Observable;
 import rx.subjects.ReplaySubject;
 
 /**
- * Default-Implementierung einer Engine.
- * <p/>
- * Ben&ouml;tigt zum Arbeiten eine Implementierung der Spielregeln, die
- * Er&ouml;ffnungsbibliothek ist optional.
+ * Default {@link Engine} implementation.
+ * <p>
+ * Requires a {@link ChessRules} implementation to operate; an {@link OpeningLibrary}
+ * is optional.
  *
  * @author StefanZ
  */
@@ -79,8 +79,8 @@ public class DefaultEngine implements Engine {
     }
 
     @Override
-    public void performMove(Move zug) {
-        stellung = stellung.performMove(zug);
+    public void performMove(Move move) {
+        stellung = stellung.performMove(move);
         zugErmitteln.aktuelleErmittlungBeenden();
     }
 
