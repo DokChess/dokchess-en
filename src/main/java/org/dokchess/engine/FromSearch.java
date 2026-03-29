@@ -19,27 +19,30 @@ package org.dokchess.engine;
 
 import org.dokchess.domain.Move;
 import org.dokchess.domain.Position;
-import org.dokchess.opening.OpeningLibrary;
+import org.dokchess.engine.search.Search;
 import rx.Observer;
 
-class AusBibliothek extends ZugErmitteln {
+/**
+ * Chain link that runs the {@link Search} to pick a move.
+ */
+class FromSearch extends DetermineMove {
 
-    private OpeningLibrary bibliothek;
+    private final Search search;
 
-    public AusBibliothek(OpeningLibrary bibliothek,
-                         ZugErmitteln nachfolger) {
-        super(nachfolger);
-        this.bibliothek = bibliothek;
+    public FromSearch(final Search search) {
+        this(search, null);
+    }
+
+    public FromSearch(final Search search, final DetermineMove next) {
+        super(next);
+        this.search = search;
     }
 
     @Override
-    public void ermittelZug(Position stellung, Observer<Move> subject) {
-        Move zug = bibliothek.lookUpMove(stellung);
-        if (zug != null) {
-            subject.onNext(zug);
-            subject.onCompleted();
-        } else {
-            super.ermittelZug(stellung, subject);
-        }
+    public void determineMove(Position position, Observer<Move> observer) {
+        search.searchMove(position, observer);
+        super.determineMove(position, observer);
     }
+
+
 }

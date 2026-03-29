@@ -39,7 +39,7 @@ public class DefaultEngine implements Engine {
 
     private Position stellung;
 
-    private ZugErmitteln zugErmitteln;
+    private DetermineMove movePipeline;
 
     public DefaultEngine(ChessRules chessRules) {
         this(chessRules, null);
@@ -55,12 +55,12 @@ public class DefaultEngine implements Engine {
         minimax.setChessRules(chessRules);
         minimax.setEvaluation(new StandardMaterialEvaluation());
 
-        AusSuche ausSuche = new AusSuche(minimax);
+        FromSearch fromSearch = new FromSearch(minimax);
 
         if (openingLibrary != null) {
-            this.zugErmitteln = new AusBibliothek(openingLibrary, ausSuche);
+            this.movePipeline = new FromLibrary(openingLibrary, fromSearch);
         } else {
-            this.zugErmitteln = ausSuche;
+            this.movePipeline = fromSearch;
         }
 
     }
@@ -68,24 +68,24 @@ public class DefaultEngine implements Engine {
     @Override
     public void setupPieces(Position position) {
         this.stellung = position;
-        zugErmitteln.aktuelleErmittlungBeenden();
+        movePipeline.cancelCurrentSearch();
     }
 
     @Override
     public Observable<Move> determineYourMove() {
         ReplaySubject<Move> subject = ReplaySubject.create();
-        zugErmitteln.ermittelZug(stellung, subject);
+        movePipeline.determineMove(stellung, subject);
         return subject;
     }
 
     @Override
     public void performMove(Move move) {
         stellung = stellung.performMove(move);
-        zugErmitteln.aktuelleErmittlungBeenden();
+        movePipeline.cancelCurrentSearch();
     }
 
     @Override
     public void close() {
-        zugErmitteln.aktuelleErmittlungBeenden();
+        movePipeline.cancelCurrentSearch();
     }
 }
