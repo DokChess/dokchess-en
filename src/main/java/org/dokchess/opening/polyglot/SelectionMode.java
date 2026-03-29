@@ -18,25 +18,24 @@
 package org.dokchess.opening.polyglot;
 
 /**
- * Beschreibt moegliche Strategien, nach denen ein Zug in der Eroefffnungsbibliothek
- * ausgewaehlt wird, wenn es mehrere zur Auswahl gibt.
+ * Strategies for choosing a move from the opening book when several candidates exist.
  *
  * @author StefanZ
  */
 public enum SelectionMode {
 
     /**
-     * Der erste Zug in der Kandidatenliste wird ausgewaehlt.
+     * Pick the first move in the candidate list (book order).
      */
-    ERSTER,
+    FIRST,
 
     /**
-     * Der laut Bibliothek am haeufigsten gespielte Zug wird ausgewaehlt.
+     * Pick the move with the highest weight in the book (most played).
      */
-    HAEUFIGSTER,
+    MOST_PLAYED,
 
     /**
-     * Der Zug wird per Zufall ausgewaehlt.
+     * Pick a move uniformly at random from the candidates.
      */
-    PER_ZUFALL
+    RANDOM
 }

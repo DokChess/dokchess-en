@@ -63,7 +63,7 @@ public final class Main {
             } else {
                 try {
                     PolyglotOpeningBook pob = new PolyglotOpeningBook(eroeffnungen);
-                    pob.setSelectionMode(SelectionMode.HAEUFIGSTER);
+                    pob.setSelectionMode(SelectionMode.MOST_PLAYED);
                     bibliothek = pob;
                 } catch (IOException e) {
                     System.err.printf(e.getMessage());

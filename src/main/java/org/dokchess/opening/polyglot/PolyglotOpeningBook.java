@@ -35,12 +35,12 @@ public class PolyglotOpeningBook implements OpeningLibrary {
     private List<BookEntry> eintraege = new ArrayList<BookEntry>();
 
     public PolyglotOpeningBook(File datei) throws FileNotFoundException, IOException {
-        this.selectionMode = SelectionMode.ERSTER;
+        this.selectionMode = SelectionMode.FIRST;
         readData(datei);
     }
 
     public PolyglotOpeningBook(InputStream is) throws FileNotFoundException, IOException {
-        this.selectionMode = SelectionMode.ERSTER;
+        this.selectionMode = SelectionMode.FIRST;
         readData(is);
     }
 
@@ -57,9 +57,9 @@ public class PolyglotOpeningBook implements OpeningLibrary {
 
         if (treffer != null && treffer.size() > 0) {
 
-            if (selectionMode == SelectionMode.HAEUFIGSTER) {
+            if (selectionMode == SelectionMode.MOST_PLAYED) {
                 Collections.sort(treffer);
-            } else if (selectionMode == SelectionMode.PER_ZUFALL) {
+            } else if (selectionMode == SelectionMode.RANDOM) {
                 Collections.shuffle(treffer);
             }
 

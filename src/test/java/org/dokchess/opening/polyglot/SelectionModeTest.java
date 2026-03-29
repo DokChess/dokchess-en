@@ -42,7 +42,7 @@ public class SelectionModeTest {
 
     @Test
     public void haeufigster() {
-        buch.setSelectionMode(SelectionMode.HAEUFIGSTER);
+        buch.setSelectionMode(SelectionMode.MOST_PLAYED);
 
         Position stellung = new Position();
         List<BookEntry> eintraege = buch.findEntriesByFen(stellung.toString());
@@ -65,7 +65,7 @@ public class SelectionModeTest {
 
     @Test
     public void erster() {
-        buch.setSelectionMode(SelectionMode.ERSTER);
+        buch.setSelectionMode(SelectionMode.FIRST);
 
         Position stellung = new Position();
         List<BookEntry> eintraege = buch.findEntriesByFen(stellung.toString());
@@ -78,7 +78,7 @@ public class SelectionModeTest {
 
     @Test
     public void zufaellig() {
-        buch.setSelectionMode(SelectionMode.PER_ZUFALL);
+        buch.setSelectionMode(SelectionMode.RANDOM);
 
         Position anfang = new Position();
         Move zug = buch.lookUpMove(anfang);
