@@ -29,13 +29,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Created by stefanz on 02.01.15.
+ * Parallel minimax at the root: each legal move is evaluated in its own task on a
+ * thread pool. Results are streamed as {@link RatedMove} instances; the best move
+ * is forwarded to the given {@link Observer}.
  */
 public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
 
     private ExecutorService executorService;
 
-    private ReplaySubject<RatedMove> aktuelleSuchErgebnisse;
+    private ReplaySubject<RatedMove> currentSearchResults;
 
     public MinimaxParallelSearch() {
         int cores = Runtime.getRuntime().availableProcessors();
@@ -44,18 +46,19 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
 
     @Override
     public final void searchMove(Position position, Observer<Move> subject) {
-        Collection<Move> zuege = chessRules.getLegalMoves(position);
-        if (zuege.size() > 0) {
-            ReplaySubject<RatedMove> suchErgebnisse = ReplaySubject.create();
-            aktuelleSuchErgebnisse = suchErgebnisse;
+        Collection<Move> legalMoves = chessRules.getLegalMoves(position);
+        if (legalMoves.size() > 0) {
+            ReplaySubject<RatedMove> searchResults = ReplaySubject.create();
+            currentSearchResults = searchResults;
 
-            ErgebnisMelden melder = new ErgebnisMelden(subject, zuege.size());
-            suchErgebnisse.subscribe(melder);
+            BestMoveReporter reporter = new BestMoveReporter(subject, legalMoves.size());
+            searchResults.subscribe(reporter);
 
-            for (Move zug : zuege) {
-                EinzelnenZugUntersuchen zugUntersuchen = new EinzelnenZugUntersuchen(position, zug, suchErgebnisse);
-                suchErgebnisse.subscribe(zugUntersuchen);
-                executorService.execute(zugUntersuchen);
+            for (Move move : legalMoves) {
+                RootMoveEvaluationTask task =
+                        new RootMoveEvaluationTask(position, move, searchResults);
+                searchResults.subscribe(task);
+                executorService.execute(task);
             }
         } else {
             subject.onCompleted();
@@ -64,9 +67,9 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
 
     @Override
     public final void cancelSearch() {
-        if (aktuelleSuchErgebnisse != null) {
-            aktuelleSuchErgebnisse.onCompleted();
-            aktuelleSuchErgebnisse = null;
+        if (currentSearchResults != null) {
+            currentSearchResults.onCompleted();
+            currentSearchResults = null;
         }
     }
 
@@ -76,40 +79,44 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
         this.executorService.shutdown();
     }
 
-    class EinzelnenZugUntersuchen implements Runnable, Observer<RatedMove> {
+    /**
+     * Evaluates one root move in a worker thread and publishes a {@link RatedMove}.
+     */
+    class RootMoveEvaluationTask implements Runnable, Observer<RatedMove> {
 
-        private Position stellung;
+        private final Position position;
 
-        private Move zug;
+        private final Move move;
 
-        private ReplaySubject<RatedMove> suchErgebnisse;
+        private final ReplaySubject<RatedMove> searchResults;
 
-        private boolean berechnungBeendet = false;
+        private boolean computationFinished = false;
 
-        EinzelnenZugUntersuchen(Position stellung, Move zug, ReplaySubject<RatedMove> suchErgebnisse) {
-            this.stellung = stellung;
-            this.zug = zug;
-            this.suchErgebnisse = suchErgebnisse;
+        RootMoveEvaluationTask(Position position, Move move,
+                               ReplaySubject<RatedMove> searchResults) {
+            this.position = position;
+            this.move = move;
+            this.searchResults = searchResults;
         }
 
         @Override
         public void run() {
-            if (!berechnungBeendet) {
-                Colour spielerFarbe = stellung.getToMove();
-                Position nachZug = stellung.performMove(zug);
-                int wert = bewerteStellungRekursiv(nachZug, spielerFarbe);
-                suchErgebnisse.onNext(new RatedMove(zug, wert));
+            if (!computationFinished) {
+                Colour rootPlayerColour = position.getToMove();
+                Position positionAfterMove = position.performMove(move);
+                int score = evaluatePositionRecursive(positionAfterMove, rootPlayerColour);
+                searchResults.onNext(new RatedMove(move, score));
             }
         }
 
         @Override
         public void onCompleted() {
-            this.berechnungBeendet = true;
+            this.computationFinished = true;
         }
 
         @Override
         public void onError(Throwable e) {
-            this.berechnungBeendet = true;
+            this.computationFinished = true;
         }
 
         @Override
@@ -117,19 +124,23 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
         }
     }
 
-    class ErgebnisMelden implements Observer<RatedMove> {
+    /**
+     * Forwards the strongest {@link RatedMove} seen so far to the observer and
+     * completes when all root moves have reported.
+     */
+    class BestMoveReporter implements Observer<RatedMove> {
 
-        private Observer<Move> subject;
+        private final Observer<Move> subject;
 
-        private int anzahlKandidaten;
+        private final int candidateCount;
 
-        private int anzahlBisher;
+        private int completedCount;
 
-        private RatedMove bester = null;
+        private RatedMove bestRated = null;
 
-        public ErgebnisMelden(Observer<Move> subject, int anzahlKandidaten) {
+        BestMoveReporter(Observer<Move> subject, int candidateCount) {
             this.subject = subject;
-            this.anzahlKandidaten = anzahlKandidaten;
+            this.candidateCount = candidateCount;
         }
 
         @Override
@@ -143,13 +154,13 @@ public class MinimaxParallelSearch extends MinimaxAlgorithm implements Search {
         @Override
         public synchronized void onNext(RatedMove ratedMove) {
 
-            if (bester == null || bester.getRating() < ratedMove.getRating()) {
-                bester = ratedMove;
+            if (bestRated == null || bestRated.getRating() < ratedMove.getRating()) {
+                bestRated = ratedMove;
                 subject.onNext(ratedMove.getMove());
             }
 
-            anzahlBisher += 1;
-            if (anzahlBisher == anzahlKandidaten) {
+            completedCount += 1;
+            if (completedCount == candidateCount) {
                 subject.onCompleted();
             }
         }

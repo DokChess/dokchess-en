@@ -26,48 +26,53 @@ import org.dokchess.rules.ChessRules;
 
 import java.util.Collection;
 
+/**
+ * Depth-limited minimax over legal moves, using a pluggable {@link Evaluation}
+ * at the leaf nodes. Checkmate and stalemate are handled explicitly.
+ */
 public class MinimaxAlgorithm {
 
     protected ChessRules chessRules;
 
     protected Evaluation evaluation;
 
-    private static final int MATT_BEWERTUNG = Evaluation.BEST / 2;
+    /** Base magnitude used when scoring checkmate (prefers shorter mates via depth term). */
+    private static final int CHECKMATE_SCORE = Evaluation.BEST / 2;
 
     private int depth;
 
     /**
-     * Setzt die Bewertungsfunktion, anhand derer die Stellungen bei Erreichen
-     * der maximalen Suchtiefe bewertet werden.
+     * Sets the evaluation function used at the maximum search depth.
      */
     public void setEvaluation(Evaluation evaluation) {
         this.evaluation = evaluation;
     }
 
     /**
-     * Setzt eine Implementierung der Spielregeln, anhand erlaubte moegliche
-     * Zuege und auch Matt und Patt erkannt werden.
+     * Sets the chess rules used to generate legal moves and to detect check,
+     * checkmate, and stalemate.
      */
     public void setChessRules(ChessRules chessRules) {
         this.chessRules = chessRules;
     }
 
     /**
-     * Set the maximum search depth in half moves. That means at 4 each player moves twice.
+     * Sets the maximum search depth in half-moves (plies). For example, {@code 4}
+     * means each side may move twice in the lookahead.
      *
-     * @param depth serach depth in half moves
+     * @param depth search depth in plies
      */
     public void setDepth(int depth) {
         this.depth = depth;
     }
 
     /**
-     * Determines the optimal move according to minimax for the position passed and
-     * given evaluation at fixed search depth.
-     * The method blocks and is deterministic.
+     * Returns the best move for the side to move in {@code position} using minimax
+     * at the configured depth. Blocks until finished; deterministic for a given
+     * position and rule order.
      *
-     * @param position position to examine
-     * @return best move according to minimax
+     * @param position root position to search
+     * @return best move according to minimax, or {@code null} if there are no moves
      */
     public Move determineBestMove(Position position) {
 
@@ -80,7 +85,7 @@ public class MinimaxAlgorithm {
         for (Move move : moves) {
             Position newPos = position.performMove(move);
 
-            int value = bewerteStellungRekursiv(newPos, playerColour);
+            int value = evaluatePositionRecursive(newPos, playerColour);
 
             if (value > bestValue) {
                 bestValue = value;
@@ -91,64 +96,66 @@ public class MinimaxAlgorithm {
         return bestMove;
     }
 
-
-    protected int bewerteStellungRekursiv(Position stellung, Colour spielerFarbe) {
-        return bewerteStellungRekursiv(stellung, 1, spielerFarbe);
+    /**
+     * Recursive evaluation from ply depth 1 for the given root player colour.
+     */
+    protected int evaluatePositionRecursive(Position position, Colour rootPlayerColour) {
+        return evaluatePositionRecursive(position, 1, rootPlayerColour);
     }
 
+    /**
+     * Minimax with alternating min/max layers at odd/even ply depths.
+     *
+     * @param position     position to evaluate
+     * @param currentDepth 1-based ply counter from the root
+     * @param rootPlayerColour side to maximise at the root (engine's player)
+     */
+    protected int evaluatePositionRecursive(Position position, int currentDepth,
+                                            Colour rootPlayerColour) {
 
-    protected int bewerteStellungRekursiv(Position stellung, int aktuelleTiefe,
-                                          Colour spielerFarbe) {
+        if (currentDepth == depth) {
+            return evaluation.evaluatePosition(position, rootPlayerColour);
+        }
+        Collection<Move> legalMoves = chessRules.getLegalMoves(position);
+        if (legalMoves.isEmpty()) {
 
-        if (aktuelleTiefe == depth) {
-            return evaluation.evaluatePosition(stellung, spielerFarbe);
-        } else {
-            Collection<Move> zuege = chessRules.getLegalMoves(stellung);
-            if (zuege.isEmpty()) {
+            // Stalemate
+            if (!chessRules
+                    .isCheck(position, position.getToMove())) {
+                return Evaluation.BALANCED;
+            }
 
-                // PATT
-                if (!chessRules
-                        .isCheck(stellung, stellung.getToMove())) {
-                    return Evaluation.BALANCED;
-                }
+            // Checkmate — include depth so shorter mates score higher
+            if (position.getToMove() == rootPlayerColour) {
+                return -(CHECKMATE_SCORE - currentDepth);
+            }
+            return CHECKMATE_SCORE - currentDepth;
 
-                // MATT
-                // Tiefe mit einrechnen, um fruehes Matt zu bevorzugen
-                if (stellung.getToMove() == spielerFarbe) {
-                    return -(MATT_BEWERTUNG - aktuelleTiefe);
-                } else {
-                    return MATT_BEWERTUNG - aktuelleTiefe;
-                }
-
-            } else {
-                if (aktuelleTiefe % 2 == 0) {
-                    // Max
-                    int max = Evaluation.WORST;
-                    for (Move zug : zuege) {
-                        Position neueStellung = stellung.performMove(zug);
-                        int wert = bewerteStellungRekursiv(neueStellung,
-                                aktuelleTiefe + 1, spielerFarbe);
-                        if (wert > max) {
-                            max = wert;
-                        }
-                    }
-                    return max;
-                } else {
-                    // Min
-                    int min = Evaluation.BEST;
-                    for (Move zug : zuege) {
-                        Position neueStellung = stellung.performMove(zug);
-                        int wert = bewerteStellungRekursiv(neueStellung,
-                                aktuelleTiefe + 1, spielerFarbe);
-                        if (wert < min) {
-                            min = wert;
-                        }
-                    }
-                    return min;
+        }
+        if (currentDepth % 2 == 0) {
+            // Max layer
+            int max = Evaluation.WORST;
+            for (Move move : legalMoves) {
+                Position childPosition = position.performMove(move);
+                int score = evaluatePositionRecursive(childPosition,
+                        currentDepth + 1, rootPlayerColour);
+                if (score > max) {
+                    max = score;
                 }
             }
+            return max;
         }
+        // Min layer
+        int min = Evaluation.BEST;
+        for (Move move : legalMoves) {
+            Position childPosition = position.performMove(move);
+            int score = evaluatePositionRecursive(childPosition,
+                    currentDepth + 1, rootPlayerColour);
+            if (score < min) {
+                min = score;
+            }
+        }
+        return min;
     }
-
 
 }
