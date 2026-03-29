@@ -26,7 +26,7 @@ import org.junit.Test;
 public class MainTest {
 
     @Test
-    public void xboardBauen() {
+    public void buildXBoard() {
         XBoard xboard = Main.buildXBoard();
         Assert.assertNotNull(xboard);
     }

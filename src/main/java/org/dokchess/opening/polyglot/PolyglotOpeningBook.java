@@ -28,23 +28,39 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Polyglot (.bin) opening book backed by an in-memory list of {@link BookEntry} records.
+ * {@link SelectionMode} controls how a move is chosen when several entries match a position.
+ */
 public class PolyglotOpeningBook implements OpeningLibrary {
 
     private SelectionMode selectionMode;
 
-    private List<BookEntry> eintraege = new ArrayList<BookEntry>();
+    private final List<BookEntry> entries = new ArrayList<>();
 
-    public PolyglotOpeningBook(File datei) throws FileNotFoundException, IOException {
+    /**
+     * Loads a book from a file. Selection mode defaults to {@link SelectionMode#FIRST}.
+     *
+     * @param file readable polyglot book file
+     */
+    public PolyglotOpeningBook(File file) throws FileNotFoundException, IOException {
         this.selectionMode = SelectionMode.FIRST;
-        readData(datei);
+        readData(file);
     }
 
-    public PolyglotOpeningBook(InputStream is) throws FileNotFoundException, IOException {
+    /**
+     * Loads a book from a stream. Selection mode defaults to {@link SelectionMode#FIRST}.
+     *
+     * @param inputStream polyglot book bytes (caller may close the stream afterwards)
+     */
+    public PolyglotOpeningBook(InputStream inputStream) throws FileNotFoundException, IOException {
         this.selectionMode = SelectionMode.FIRST;
-        readData(is);
+        readData(inputStream);
     }
 
-
+    /**
+     * Sets how moves are picked when multiple book entries match the same position key.
+     */
     public void setSelectionMode(SelectionMode selectionMode) {
         this.selectionMode = selectionMode;
     }
@@ -53,50 +69,47 @@ public class PolyglotOpeningBook implements OpeningLibrary {
     public Move lookUpMove(Position position) {
 
         String fen = position.toString();
-        List<BookEntry> treffer = findEntriesByFen(fen);
+        List<BookEntry> matches = findEntriesByFen(fen);
 
-        if (treffer != null && treffer.size() > 0) {
+        if (matches != null && !matches.isEmpty()) {
 
             if (selectionMode == SelectionMode.MOST_PLAYED) {
-                Collections.sort(treffer);
+                Collections.sort(matches);
             } else if (selectionMode == SelectionMode.RANDOM) {
-                Collections.shuffle(treffer);
+                Collections.shuffle(matches);
             }
 
-            BookEntry eintrag = treffer.get(0);
+            BookEntry chosen = matches.get(0);
 
-            Square von = new Square(eintrag.getMoveFrom());
-            Square nach = new Square(eintrag.getMoveTo());
-            Piece figur = position.getPiece(von);
-            boolean schlagen = position.getPiece(nach) != null;
+            Square fromSquare = new Square(chosen.getMoveFrom());
+            Square toSquare = new Square(chosen.getMoveTo());
+            Piece piece = position.getPiece(fromSquare);
+            boolean capture = position.getPiece(toSquare) != null;
 
-            Move zug = new Move(figur, von, nach, schlagen);
+            return new Move(piece, fromSquare, toSquare, capture);
+        }
+        return null;
+    }
 
-            return zug;
-        } else {
-            return null;
+    final void readData(File file) throws IOException {
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            readData(fileInputStream);
         }
     }
 
-    final void readData(File datei) throws IOException {
-        FileInputStream fis = new FileInputStream(datei);
-        readData(fis);
-        fis.close();
-    }
+    final void readData(InputStream inputStream) throws IOException {
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
 
-    final void readData(InputStream is) throws IOException {
-        BufferedInputStream bis = new BufferedInputStream(is);
-
-        while (bis.available() > 0) {
-            byte[] entry = new byte[16];
-            bis.read(entry);
-            BookEntry bookEntry = new BookEntry(entry);
-            eintraege.add(bookEntry);
+        while (bufferedInputStream.available() > 0) {
+            byte[] rawEntry = new byte[16];
+            bufferedInputStream.read(rawEntry);
+            BookEntry bookEntry = new BookEntry(rawEntry);
+            entries.add(bookEntry);
         }
     }
 
     List<BookEntry> getEntries() {
-        return eintraege;
+        return entries;
     }
 
     List<BookEntry> findEntriesByFen(String fen) {
@@ -110,9 +123,9 @@ public class PolyglotOpeningBook implements OpeningLibrary {
     }
 
     List<BookEntry> findEntriesByKey(byte[] key) {
-        List<BookEntry> result = new ArrayList<BookEntry>();
+        List<BookEntry> result = new ArrayList<>();
 
-        for (BookEntry bookEntry : eintraege) {
+        for (BookEntry bookEntry : entries) {
             boolean equal = true;
             byte[] bookEntryKey = bookEntry.getKey();
             for (int i = 0; i < 8 && equal; ++i) {
