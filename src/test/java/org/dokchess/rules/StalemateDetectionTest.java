@@ -22,45 +22,47 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AufPattPruefenTest {
+/**
+ * {@link DefaultChessRules#isStalemate(Position)}.
+ */
+public class StalemateDetectionTest {
 
     private ChessRules chessRules;
 
     @Before
-    public void setup() {
+    public void setUp() {
         chessRules = new DefaultChessRules();
     }
 
     /**
-     * Die Anfangsstellung ist kein Patt.
+     * The standard starting position is not stalemate.
      */
     @Test
-    public void anfangsstellung() {
-        Position anfangsstellung = new Position();
-        Assert.assertFalse("Anfangsstellung",
-                chessRules.isStalemate(anfangsstellung));
+    public void startingPositionIsNotStalemate() {
+        Position position = new Position();
+        Assert.assertFalse("starting position",
+                chessRules.isStalemate(position));
     }
 
-
     /**
-     * Schaefermatt ist kein Patt.
+     * Scholar's mate is checkmate, not stalemate.
      */
     @Test
-    public void schaeferMatt() {
+    public void scholarMateIsNotStalemate() {
         String fen = "r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 1";
-        Position stellung = new Position(fen);
-        Assert.assertFalse("Schaefermatt",
-                chessRules.isStalemate(stellung));
+        Position position = new Position(fen);
+        Assert.assertFalse("Scholar's mate",
+                chessRules.isStalemate(position));
     }
 
     /**
-     * einfaches Patt.
+     * A basic stalemate: Black to move, no legal moves, not in check.
      */
     @Test
-    public void einfachesPatt() {
+    public void simpleStalemate() {
         String fen = "7k/8/7K/8/8/8/8/6Q1 b - - 0 1";
-        Position stellung = new Position(fen);
-        Assert.assertTrue("einfaches Patt",
-                chessRules.isStalemate(stellung));
+        Position position = new Position(fen);
+        Assert.assertTrue("simple stalemate",
+                chessRules.isStalemate(position));
     }
 }

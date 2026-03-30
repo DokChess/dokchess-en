@@ -22,34 +22,36 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AufMattPruefenTest {
+/**
+ * {@link DefaultChessRules#isCheckmate(Position)}.
+ */
+public class CheckmateDetectionTest {
 
     private ChessRules chessRules;
 
     @Before
-    public void setup() {
+    public void setUp() {
         chessRules = new DefaultChessRules();
     }
 
     /**
-     * Die Anfangsstellung ist kein Matt.
+     * The standard starting position is not checkmate.
      */
     @Test
-    public void anfangsstellung() {
-        Position anfangsstellung = new Position();
-        Assert.assertFalse("Anfangsstellung",
-                chessRules.isCheckmate(anfangsstellung));
+    public void startingPositionIsNotCheckmate() {
+        Position position = new Position();
+        Assert.assertFalse("starting position",
+                chessRules.isCheckmate(position));
     }
 
-
     /**
-     * Schaefermatt ist matt.
+     * Scholar's mate (similar opening pattern) is checkmate.
      */
     @Test
-    public void schaeferMatt() {
-        Position stellung = new Position("r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 1");
-        Assert.assertTrue("Schaefermatt",
-                chessRules.isCheckmate(stellung));
+    public void scholarMateIsCheckmate() {
+        Position position = new Position("r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 1");
+        Assert.assertTrue("Scholar's mate",
+                chessRules.isCheckmate(position));
     }
 
 }
