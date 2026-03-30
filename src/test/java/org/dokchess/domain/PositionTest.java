@@ -73,7 +73,7 @@ public class PositionTest {
     }
 
     /**
-     * Umwandlung eines weissen Bauern in eine Dame
+     * Promotion of a white pawn to a queen.
      */
     @Test
     public void pawnPromotedToQueen() {
@@ -87,10 +87,10 @@ public class PositionTest {
     }
 
     /**
-     * Weiss macht eine kurze Rochade.
+     * White castles kingside (short castling).
      */
     @Test
-    public void kurzeRochadeWeiss() {
+    public void whiteKingsideCastling() {
         Position pos = new Position("rnbqkbnr/ppp3pp/3ppp2/8/8/4PN2/PPPPBPPP/RNBQK2R w KQkq - 0 1");
 
         Move move = new Move(WHITE_KING, e1, g1);
@@ -98,7 +98,7 @@ public class PositionTest {
 
         Position newPos = pos.performMove(move);
 
-        // Koenig und Turm haben sich bewegt
+        // King and rook have moved
         assertNull(newPos.getPiece(e1));
         assertNull(newPos.getPiece(h1));
 
@@ -112,34 +112,34 @@ public class PositionTest {
     }
 
     /**
-     * Weiss bewegt einen Turm oder den Koenig. Rochaderechte anpassen.
+     * White moves a rook or the king; castling rights update accordingly.
      */
     @Test
-    public void rochadeRechteAnpassenWeiss() {
-        Position stellung = new Position("4k3/8/1Q6/8/8/8/8/R3K2R w KQ - 0 1");
+    public void whiteCastlingRightsUpdatedWhenMovingRookOrKing() {
+        Position position = new Position("4k3/8/1Q6/8/8/8/8/R3K2R w KQ - 0 1");
 
-        // Turm wird bewegt. Auf der anderen Seite ist dann rochade noch erlaubt
-        Move z1 = new Move(WHITE_ROOK, a1, b1);
-        Position neueStellung1 = stellung.performMove(z1);
-        assertFalse(neueStellung1.castlingAllowed(WHITE_QUEENSIDE));
-        assertTrue(neueStellung1.castlingAllowed(WHITE_KINGSIDE));
+        // Rook moves; castling remains possible on the other wing
+        Move moveQueensideRook = new Move(WHITE_ROOK, a1, b1);
+        Position afterQueensideRook = position.performMove(moveQueensideRook);
+        assertFalse(afterQueensideRook.castlingAllowed(WHITE_QUEENSIDE));
+        assertTrue(afterQueensideRook.castlingAllowed(WHITE_KINGSIDE));
 
-        // Gleicher Test, andere Seite
-        Move z2 = new Move(WHITE_ROOK, h1, g1);
-        Position neueStellung2 = stellung.performMove(z2);
-        assertTrue(neueStellung2.castlingAllowed(WHITE_QUEENSIDE));
-        assertFalse(neueStellung2.castlingAllowed(WHITE_KINGSIDE));
+        // Same idea, other wing
+        Move moveKingsideRook = new Move(WHITE_ROOK, h1, g1);
+        Position afterKingsideRook = position.performMove(moveKingsideRook);
+        assertTrue(afterKingsideRook.castlingAllowed(WHITE_QUEENSIDE));
+        assertFalse(afterKingsideRook.castlingAllowed(WHITE_KINGSIDE));
 
-        // Koenig wird bewegt. Keine Rochade fuer weiss merh moeglich.
-        Move z3 = new Move(WHITE_KING, e1, e2);
-        Position neueStellung3 = stellung.performMove(z3);
-        assertFalse(neueStellung3.castlingAllowed(WHITE_KINGSIDE));
-        assertFalse(neueStellung3.castlingAllowed(WHITE_QUEENSIDE));
+        // King moves; White can no longer castle
+        Move moveKing = new Move(WHITE_KING, e1, e2);
+        Position afterKing = position.performMove(moveKing);
+        assertFalse(afterKing.castlingAllowed(WHITE_KINGSIDE));
+        assertFalse(afterKing.castlingAllowed(WHITE_QUEENSIDE));
     }
 
 
     @Test
-    public void sucheFelderMitWeissenFiguren() {
+    public void squaresWithWhitePieces() {
         Position pos = new Position();
 
         Set<Square> squares = pos.squaresWithColour(WHITE);
@@ -148,7 +148,7 @@ public class PositionTest {
     }
 
     @Test
-    public void sucheFelderMitWeissenBauern() {
+    public void findSquaresWithWhitePawns() {
         Position position = new Position();
 
         List<Square> squares = position.findSquaresWith(WHITE_PAWN);
@@ -157,7 +157,7 @@ public class PositionTest {
     }
 
     @Test
-    public void sucheFelderMitKoenig() {
+    public void findKingSquares() {
         Position position = new Position();
 
         Square blackSquare = position.findSquareWithKing(BLACK);
