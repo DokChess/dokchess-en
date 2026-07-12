@@ -1,6 +1,3 @@
-apply plugin: 'idea'
-apply plugin: 'java'
-
 /*
  * Copyright (c) 2010-2016 Stefan Zoerner
  * This file is part of DokChess.
@@ -19,6 +16,14 @@ apply plugin: 'java'
  * along with DokChess.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+apply plugin: 'idea'
+apply plugin: 'java'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 // See
 // http://selimober.com/blog/2014/01/24/separate-unit-and-integration-tests-using-gradle/
 sourceSets {
@@ -26,31 +31,52 @@ sourceSets {
         java.srcDir file('src/integTest/java')
     }
 }
-task integTest(type: Test) {
-    testClassesDir = sourceSets.integTest.output.classesDir
-    classpath = sourceSets.integTest.runtimeClasspath
+
+configurations {
+    integTestImplementation.extendsFrom testImplementation
+    integTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
-check.dependsOn -= integTest
+
+tasks.register('integTest', Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.integTest.output.classesDirs
+    classpath = sourceSets.integTest.runtimeClasspath
+    useJUnit()
+}
+
+tasks.named('check') {
+    dependsOn -= 'integTest'
+}
+
+tasks.named('test', Test) {
+    useJUnit()
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
-    compile 'io.reactivex:rxjava:1.0.0'
+    implementation 'io.reactivex:rxjava:1.0.0'
+    testImplementation 'junit:junit:4.12'
 
-    integTestCompile sourceSets.main.output
-    integTestCompile configurations.testCompile
-    integTestCompile sourceSets.test.output
-    integTestRuntime configurations.testRuntime
+    integTestImplementation sourceSets.main.output
+    integTestImplementation sourceSets.test.output
 }
 
-task uberjar(type: Jar, dependsOn: ':compileJava') {
-    from files(sourceSets.main.output.classesDir)
-    from configurations.runtime.asFileTree.files.collect { zipTree(it) }
-
+tasks.named('jar', Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('.jar') }.collect { zipTree(it) }
+    }
     manifest {
         attributes 'Main-Class': 'org.dokchess.Main'
     }
+}
+
+tasks.register('uberjar') {
+    dependsOn tasks.jar
+    group = 'build'
+    description = 'Same as jar: fat JAR with Main-Class and runtime dependencies.'
 }
